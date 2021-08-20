@@ -1,0 +1,2 @@
+# noqa
+NAME = 'EVMScriptParser'

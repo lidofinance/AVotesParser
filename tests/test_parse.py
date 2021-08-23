@@ -1,8 +1,10 @@
+"""Tests for EVMScripts parser"""
 from evmscript_parser import parse
 from evmscript_parser.core.format import HEX_PREFIX
 
 
 def test_single_parsing():
+    """Perform simple test for the single EVM script."""
     spec_id = '00000001'
     address = '7804b6667d649c819dfa94af50c782c26f5abc32'
     method_id = '945233e2'

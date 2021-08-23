@@ -1,3 +1,4 @@
+"""Installation of EVMScripts parser package."""
 from setuptools import setup, find_packages
 
 from evmscript_parser.package import NAME

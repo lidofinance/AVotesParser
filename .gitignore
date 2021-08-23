@@ -40,3 +40,6 @@ venv.bak/
 
 # IDE
 **/.idea/**
+
+# TOX testing environment
+.tox

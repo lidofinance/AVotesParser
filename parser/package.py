@@ -1,2 +1,0 @@
-# noqa
-NAME = 'EVMScriptParser'

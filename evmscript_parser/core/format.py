@@ -1,7 +1,9 @@
 """Dataclasses for store parsed EVM script parts."""
-from dataclasses import dataclass, field
+import json
+
+from dataclasses import dataclass, field, asdict
 from typing import (
-    List
+    List, Dict, Any, Optional
 )
 
 # ===========================================================================
@@ -66,6 +68,8 @@ class OneCall:
     method_id: str
     # call_data_length - 4 bytes
     encoded_call_data: str
+    # Contract ABI
+    abi: Optional[Dict[str, Any]] = field(default=None)
 
     def __post_init__(self):
         """Check length constraints and perform normalized to hex."""
@@ -113,3 +117,7 @@ class EVMScript:
             )
 
         self.spec_id = _add_hex_prefix(self.spec_id)
+
+    def to_json(self) -> str:
+        """Encode structure into json format."""
+        return json.dumps(asdict(self))

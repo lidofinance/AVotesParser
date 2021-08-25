@@ -92,9 +92,13 @@ def with_decoded_signatures(
 
 
 class ABI(ABC):
+    """
+    Instance for getting methods descriptions from ABI.
+    """
+
     @abstractmethod
     def _load_abi(self) -> ABI_T:
-        """Should be overloaded with according to the way of getting ABI."""
+        """Describe a way of getting ABI."""
         pass
 
     @staticmethod

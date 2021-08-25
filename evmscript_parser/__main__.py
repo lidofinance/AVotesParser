@@ -1,6 +1,7 @@
 """
 CLI of EVM scripts parser.
 """
+import sys
 import logging
 import argparse
 
@@ -9,6 +10,7 @@ from mimetypes import guess_type, types_map
 import requests
 
 from .core.parse import parse
+from .core.format import FormatError
 from .package import CLI_NAME
 from .abi.etherscan import (
     ABIEtherscan, DEFAULT_NET, NET_URL_MAP
@@ -44,6 +46,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--debug-message',
                         action='store_true',
                         help='Show debug info')
+    parser.add_argument('--retries',
+                        type=int,
+                        default=5,
+                        help='Number of retries of calling Etherscan API.')
 
     return parser.parse_args()
 
@@ -72,11 +78,16 @@ def main():
 
     logging.debug(f'API key: {token}')
 
-    parsed = parse(args.evmscript)
+    try:
+        parsed = parse(args.evmscript)
+    except FormatError as err:
+        logging.error(f'Parsing error: {repr(err)}')
+        sys.exit(1)
+
     for call in parsed.calls:
         try:
             abi = ABIEtherscan(
-                token, call.address, args.net
+                token, call.address, args.net, args.retries
             ).get_func_abi(
                 call.method_id
             )

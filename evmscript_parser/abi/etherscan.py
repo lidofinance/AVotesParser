@@ -93,7 +93,9 @@ def _send_query(
         initial_wait += increase_wait
         increase_wait *= 2
 
-    failed_reason = data.get('message', 'unknown')
+    message = data.get('message', 'unknown')
+    result = data.get('result', 'unknown')
+    failed_reason = f'{message}; {result}'
     raise RuntimeError(f'Failed reason: {failed_reason}')
 
 
@@ -103,7 +105,7 @@ _get_contract_abi = partial(_send_query, 'contract', 'getabi')
 
 def get_abi(
         api_key: str, address: str, specific_net: str,
-        retries: int = 6
+        retries: int = 5
 ) -> ABI_T:
     """
     Get ABI of target contract by calling to Etherscan API.
@@ -126,9 +128,14 @@ def get_abi(
 # ============================================================================
 
 class ABIEtherscan(ABI):
+    """
+    Getting contracts ABI through Etherscan API.
+    """
+
     def __init__(
             self, api_key: str, address: str,
-            specific_net: Optional[str] = None
+            specific_net: Optional[str] = None,
+            retries: int = 5
     ):
         """
         Create instance for getting ABI through Etherscan API.
@@ -144,9 +151,10 @@ class ABIEtherscan(ABI):
         self._api_key = api_key
         self._address = address
         self._specific_net = specific_net
+        self._retries = retries
         super().__init__()
 
     def _load_abi(self) -> ABI_T:
         return get_abi(
-            self._api_key, self._address, self._specific_net
+            self._api_key, self._address, self._specific_net, self._retries
         )

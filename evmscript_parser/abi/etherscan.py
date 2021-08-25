@@ -128,6 +128,10 @@ def get_abi(
 # ============================================================================
 
 class ABIEtherscan(ABI):
+    """
+    Getting contracts ABI through Etherscan API.
+    """
+
     def __init__(
             self, api_key: str, address: str,
             specific_net: Optional[str] = None,

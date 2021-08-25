@@ -3,11 +3,16 @@ Getting contracts ABI through Etherscan API.
 """
 import json
 import time
+import logging
 import requests
 
 from functools import lru_cache, partial
 from typing import (
-    Optional, Dict, Any
+    Optional
+)
+
+from .base import (
+    ABI, ABI_T
 )
 
 # ============================================================================
@@ -28,14 +33,14 @@ CACHE_SIZE = 128
 
 
 # ============================================================================
-# ================================ API Caller ================================
+# ================================ Utilities =================================
 # ============================================================================
 
 
 @lru_cache(maxsize=CACHE_SIZE)
 def _send_query(
         module: str, action: str, api_key: str, address: str,
-        retries: int = MINIMUM_RETRIES, specific_net: Optional[str] = None
+        retries: int, specific_net: str
 ) -> str:
     """
     Send query to Etherscan API.
@@ -50,9 +55,6 @@ def _send_query(
     :exception HTTPError in case of error at network layer.
     :exception RuntimeError in case of error in api calls.
     """
-    if specific_net is None:
-        specific_net = DEFAULT_NET
-
     retries = max(MINIMUM_RETRIES, retries)
 
     if specific_net not in NET_URL_MAP:
@@ -73,7 +75,11 @@ def _send_query(
     data = {}
     initial_wait = 0
     increase_wait = 1
-    for _ in range(retries):
+    for ind in range(retries):
+        logging.debug(
+            f'Send query to Etherscan API; retry: {ind + 1}/{retries}; '
+            f'sleep for {initial_wait} seconds.'
+        )
         time.sleep(initial_wait)
 
         response = requests.get(query, headers={'User-Agent': ''})
@@ -85,7 +91,7 @@ def _send_query(
             return data['result']
 
         initial_wait += increase_wait
-        initial_wait *= 2
+        increase_wait *= 2
 
     failed_reason = data.get('message', 'unknown')
     raise RuntimeError(f'Failed reason: {failed_reason}')
@@ -98,7 +104,7 @@ _get_contract_abi = partial(_send_query, 'contract', 'getabi')
 def get_abi(
         api_key: str, address: str, specific_net: str,
         retries: int = 6
-) -> Dict[str, Any]:
+) -> ABI_T:
     """
     Get ABI of target contract by calling to Etherscan API.
 
@@ -106,10 +112,41 @@ def get_abi(
     :param address: str, address of target contract.
     :param retries: int, number of retry in case of unsuccessful api call.
     :param specific_net: str, name of target net.
-    :return: Dict[str, Any], abi description.
+    :return: List[Dict[str, Any]], abi description.
     :exception HTTPError in case of error at network layer.
     :exception RuntimeError in case of error in api calls.
     """
     return json.loads(_get_contract_abi(
         api_key, address, retries, specific_net
     ))
+
+
+# ============================================================================
+# ============================== ABI =========================================
+# ============================================================================
+
+class ABIEtherscan(ABI):
+    def __init__(
+            self, api_key: str, address: str,
+            specific_net: Optional[str] = None
+    ):
+        """
+        Create instance for getting ABI through Etherscan API.
+
+        :param api_key: str, API credentials.
+        :param address: str, address of target contract.
+        :param specific_net: str, name of target net.
+        :exception HTTPError in case of error at network layer.
+        :exception RuntimeError in case of error in api calls.
+        """
+        if specific_net is None:
+            specific_net = DEFAULT_NET
+        self._api_key = api_key
+        self._address = address
+        self._specific_net = specific_net
+        super().__init__()
+
+    def _load_abi(self) -> ABI_T:
+        return get_abi(
+            self._api_key, self._address, self._specific_net
+        )

@@ -24,6 +24,7 @@ setup(
         ]
     },
     install_requires=[
-        'requests~=2.26.0'
+        'requests~=2.26.0',
+        'pysha3~=1.0.0'
     ]
 )

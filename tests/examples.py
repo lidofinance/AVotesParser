@@ -128,3 +128,22 @@ class Parsing:
             '8b9be4c40d3829c8c708a12827f3',
         )
     ]
+
+
+class ABIEtherscan:
+    """Context for testing API caller."""
+
+    positive_examples = [
+        (
+            # Tether
+            '0xdac17f958d2ee523a2206206994597c13d831ec7',
+            '0x18160ddd',
+            'totalSupply',
+        ),
+        (
+            # Wrapped ether
+            '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+            '0x70a08231',
+            'balanceOf'
+        )
+    ]

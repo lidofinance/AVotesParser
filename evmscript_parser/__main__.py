@@ -1,14 +1,17 @@
 """
 CLI of EVM scripts parser.
 """
+import logging
 import argparse
 
 from mimetypes import guess_type, types_map
 
+import requests
+
 from .core.parse import parse
 from .package import CLI_NAME
 from .abi.etherscan import (
-    get_abi, DEFAULT_NET, NET_URL_MAP
+    ABIEtherscan, DEFAULT_NET, NET_URL_MAP
 )
 
 
@@ -38,6 +41,9 @@ def parse_args() -> argparse.Namespace:
                         help=f'net name is case-insensitive, '
                              f'default is {DEFAULT_NET}',
                         choices=NET_URL_MAP.keys())
+    parser.add_argument('--debug-message',
+                        action='store_true',
+                        help='Show debug info')
 
     return parser.parse_args()
 
@@ -45,6 +51,16 @@ def parse_args() -> argparse.Namespace:
 def main():
     """Describe utils functionality."""
     args = parse_args()
+
+    if args.debug_message:
+        level = logging.DEBUG
+
+    else:
+        level = logging.INFO
+
+    logging.basicConfig(
+        format='%(levelname)s:%(message)s', level=level
+    )
 
     m_type, _ = guess_type(args.apitoken)
     if m_type == types_map['.txt']:
@@ -54,11 +70,27 @@ def main():
     else:
         token = args.apitoken
 
+    logging.debug(f'API key: {token}')
+
     parsed = parse(args.evmscript)
     for call in parsed.calls:
-        call.abi = get_abi(token, call.address, args.net)
+        try:
+            abi = ABIEtherscan(
+                token, call.address, args.net
+            ).get_func_abi(
+                call.method_id
+            )
+            if abi is None:
+                logging.debug(f'Not found ABI for {call.method_id}')
+            else:
+                call.abi = abi
+        except requests.HTTPError as err:
+            logging.error(f'Network layer error: {repr(err)}')
 
-    print(f'Parsed:\n{repr(parsed)}')
+        except RuntimeError as err:
+            logging.error(f'API error: {repr(err)}')
+
+    logging.info(f'Parsed:\n{repr(parsed)}')
 
     if args.output_json:
         with open(args.output_json, 'w') as output_file:

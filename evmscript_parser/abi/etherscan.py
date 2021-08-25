@@ -3,6 +3,7 @@ Getting contracts ABI through Etherscan API.
 """
 import json
 import time
+import logging
 import requests
 
 from functools import lru_cache, partial
@@ -74,7 +75,11 @@ def _send_query(
     data = {}
     initial_wait = 0
     increase_wait = 1
-    for _ in range(retries):
+    for ind in range(retries):
+        logging.debug(
+            f'Send query to Etherscan API; retry: {ind + 1}/{retries}; '
+            f'sleep for {initial_wait} seconds.'
+        )
         time.sleep(initial_wait)
 
         response = requests.get(query, headers={'User-Agent': ''})
@@ -86,7 +91,7 @@ def _send_query(
             return data['result']
 
         initial_wait += increase_wait
-        initial_wait *= 2
+        increase_wait *= 2
 
     failed_reason = data.get('message', 'unknown')
     raise RuntimeError(f'Failed reason: {failed_reason}')

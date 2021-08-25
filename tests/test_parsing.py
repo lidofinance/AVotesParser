@@ -12,7 +12,8 @@ def test_single_parsing():
     spec_id = '00000001'
     address = '7804b6667d649c819dfa94af50c782c26f5abc32'
     method_id = '945233e2'
-    call_data = '000000000000000000000000922c10dafffb8b9be4c40d3829c8c708a12827f3'  # noqa
+    call_data = '000000000000000000000000922' \
+                'c10dafffb8b9be4c40d3829c8c708a12827f3'  # noqa
     call_data_length_int = (len(method_id) + len(call_data)) // 2
     call_data_length = hex(call_data_length_int)[2:].zfill(8)
 

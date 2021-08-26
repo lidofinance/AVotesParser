@@ -1,10 +1,9 @@
 """Tests for EVMScripts parser"""
 import pytest
 
-from evmscript_parser import parse
-from evmscript_parser.core.format import (
-    HEX_PREFIX, MismatchLength
-)
+from evmscript_parser.core.parse import parse_script
+from evmscript_parser.core.exceptions import ParseMismatchLength
+from evmscript_parser.core.script_specification import HEX_PREFIX
 
 
 def test_single_parsing():
@@ -17,7 +16,7 @@ def test_single_parsing():
     call_data_length_int = (len(method_id) + len(call_data)) // 2
     call_data_length = hex(call_data_length_int)[2:].zfill(8)
 
-    parsed_script = parse(''.join((
+    parsed_script = parse_script(''.join((
         HEX_PREFIX,
         spec_id, address, call_data_length,
         method_id, call_data
@@ -37,7 +36,7 @@ def test_single_parsing():
 def test_positive_examples(positive_example):
     """Run tests for positive parsing examples."""
     script_code, prepared = positive_example
-    parsed = parse(script_code)
+    parsed = parse_script(script_code)
 
     assert parsed.spec_id == prepared.spec_id
     assert len(prepared.calls) == len(parsed.calls)
@@ -55,5 +54,5 @@ def test_negative_examples(negative_example):
     """Run tests for negative parsing examples."""
     broken_script_code = negative_example[0]
 
-    with pytest.raises(MismatchLength):
-        _ = parse(broken_script_code)
+    with pytest.raises(ParseMismatchLength):
+        _ = parse_script(broken_script_code)

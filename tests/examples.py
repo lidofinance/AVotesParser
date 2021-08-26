@@ -1,5 +1,5 @@
 """Tests context."""
-from evmscript_parser.core.format import EVMScript, OneCall
+from evmscript_parser.core.parse import EVMScript, SingleCall
 
 
 class Parsing:
@@ -16,7 +16,7 @@ class Parsing:
             EVMScript(
                 spec_id='00000001',
                 calls=[
-                    OneCall(
+                    SingleCall(
                         address='7899ef901ed9b331baf7759c15d2e8728e8c2a2c',
                         call_data_length=68,
                         method_id='ae962acf',
@@ -38,7 +38,7 @@ class Parsing:
             EVMScript(
                 spec_id='00000001',
                 calls=[
-                    OneCall(
+                    SingleCall(
                         address='07804b6667d649c819dfa94af50c782c26f5abc3',
                         call_data_length=36,
                         method_id='945233e2',
@@ -64,7 +64,7 @@ class Parsing:
             EVMScript(
                 spec_id='00000001',
                 calls=[
-                    OneCall(
+                    SingleCall(
                         address='8EcF1A208E79B300C33895B62462ffb5b55627E5',
                         call_data_length=36,
                         method_id='945233e2',
@@ -74,7 +74,7 @@ class Parsing:
                             '29c8c708a12827f3'
                         )
                     ),
-                    OneCall(
+                    SingleCall(
                         address='8EcF1A208E79B300C33895B62462ffb5b55627E5',
                         call_data_length=36,
                         method_id='945233e2',
@@ -140,10 +140,10 @@ class ABIEtherscan:
             '0x18160ddd',
             'totalSupply',
         ),
-        (
-            # Wrapped ether
-            '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-            '0x70a08231',
-            'balanceOf'
-        )
+        # (
+        #     # Lido, proxy
+        #     '0xae7ab96520de3a18e5e111b5eaab095312d7fe84',
+        #     '0x18160ddd',
+        #     'totalSupply'
+        # )
     ]

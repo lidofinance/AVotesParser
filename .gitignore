@@ -43,3 +43,6 @@ venv.bak/
 
 # TOX testing environment
 .tox
+
+# Brownie
+.hypothesis

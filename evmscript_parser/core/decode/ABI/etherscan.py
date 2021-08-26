@@ -6,13 +6,17 @@ import time
 import logging
 import requests
 
+import brownie
+
 from functools import lru_cache, partial
-from typing import (
-    Optional
+from typing import Optional, Dict, Tuple
+
+from evmscript_parser.core.exceptions import (
+    ABIEtherscanNetworkError, ABIEtherscanStatusCode
 )
 
 from .base import (
-    ABI, ABI_T
+    ABIProvider, ABI_T
 )
 
 # ============================================================================
@@ -52,8 +56,8 @@ def _send_query(
     :param retries: int, number of retry in case of unsuccessful api call.
     :param specific_net: str, name of target net.
     :return: str, encoded json description of abi.
-    :exception HTTPError in case of error at network layer.
-    :exception RuntimeError in case of error in api calls.
+    :exception ABIEtherscanNetworkError in case of error at network layer.
+    :exception ABIEtherscanStatusCode in case of error in api calls.
     """
     retries = max(MINIMUM_RETRIES, retries)
 
@@ -83,7 +87,10 @@ def _send_query(
         time.sleep(initial_wait)
 
         response = requests.get(query, headers={'User-Agent': ''})
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as err:
+            raise ABIEtherscanNetworkError(repr(err))
 
         data = response.json()
 
@@ -93,10 +100,11 @@ def _send_query(
         initial_wait += increase_wait
         increase_wait *= 2
 
-    message = data.get('message', 'unknown')
-    result = data.get('result', 'unknown')
-    failed_reason = f'{message}; {result}'
-    raise RuntimeError(f'Failed reason: {failed_reason}')
+    raise ABIEtherscanStatusCode(
+        status_code=str(data.get('status', -1)),
+        message=data.get('message', 'unknown'),
+        result=data.get('result', '')
+    )
 
 
 """Alias for calling getabi functionality."""
@@ -123,38 +131,103 @@ def get_abi(
     ))
 
 
+@lru_cache(maxsize=CACHE_SIZE)
+def _punched_proxy() -> Dict[Tuple[str, str], str]:
+    return dict()
+
+
+def get_implementation_address(
+        proxy_address: str, proxy_abi: ABI_T, specific_net: str
+) -> str:
+    """Get address from behind proxy."""
+    storage = _punched_proxy()
+    key = (proxy_address, specific_net)
+
+    if key not in storage:
+        if not brownie.network.is_connected():
+            # WEB3_INFURA_PROJECT_ID should be set in environment.
+            logging.debug(
+                f'Connect to {specific_net}.'
+            )
+            brownie.network.connect(specific_net)
+
+        logging.debug(
+            f'Get address of implementation from {proxy_address} '
+            f'in {specific_net}.'
+        )
+        storage[key] = brownie.Contract.from_abi(
+            f'ProxyAt{proxy_address}', proxy_address, proxy_abi
+        ).implementation()
+
+    return storage[key]
+
+
 # ============================================================================
 # ============================== ABI =========================================
 # ============================================================================
 
-class ABIEtherscan(ABI):
+
+class ABIProviderEtherscanApi(ABIProvider):
     """
-    Getting contracts ABI through Etherscan API.
+    Provide ABI description by using Etherscan API.
     """
 
     def __init__(
-            self, api_key: str, address: str,
+            self, api_key: str,
             specific_net: Optional[str] = None,
-            retries: int = 5
+            retries: int = 5,
+            proxy_punching: bool = True
     ):
         """
-        Create instance for getting ABI through Etherscan API.
+        Prepare API caller instance.
 
-        :param api_key: str, API credentials.
-        :param address: str, address of target contract.
-        :param specific_net: str, name of target net.
-        :exception HTTPError in case of error at network layer.
-        :exception RuntimeError in case of error in api calls.
+        :param api_key: str, Etherscan API key.
+        :param specific_net: str, target net.
+        :param retries: int, number of retry tries to call API.
+        :param proxy_punching: bool, try to get implementation
+         behind a proxy.
         """
         if specific_net is None:
             specific_net = DEFAULT_NET
+
         self._api_key = api_key
-        self._address = address
         self._specific_net = specific_net
         self._retries = retries
-        super().__init__()
+        self._through_proxy = proxy_punching
 
-    def _load_abi(self) -> ABI_T:
+    def get_abi(self, address: str, *args, **kwargs) -> ABI_T:
+        """
+        Get ABI from Etherscan API.
+
+        :param address:
+        :param args: None
+        :param kwargs: None
+        :return: List[Dict[str, Any]], ABI description.
+        :exception HTTPError in case of error at network layer.
+        :exception RuntimeError in case of error in api calls.
+        """
+        abi = get_abi(
+            self._api_key, address, self._specific_net, self._retries
+        )
+        if not self._through_proxy:
+            return abi
+
+        names = {
+            entry.get('name', 'unknown'): entry
+            for entry in abi
+        }
+
+        if 'proxyType' not in names or 'implementation' not in names:
+            return abi
+
+        logging.debug(
+            f'Proxy punching for {address} '
+            f'in {self._specific_net}.'
+        )
+        address = get_implementation_address(
+            address, abi, self._specific_net
+        )
+
         return get_abi(
-            self._api_key, self._address, self._specific_net, self._retries
+            self._api_key, address, self._specific_net, self._retries
         )

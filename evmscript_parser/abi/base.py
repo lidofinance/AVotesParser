@@ -101,17 +101,14 @@ class ABI(ABC):
         """Describe a way of getting ABI."""
         pass
 
-    @staticmethod
-    def _extract_mapping(abi: ABI_T, *args, **kwargs) -> METHOD_ABI_MAPPING_T:
+    def _extract_mapping(self) -> METHOD_ABI_MAPPING_T:
         """Convert ABI description to mapping { function -> function desc. }"""
-        return with_decoded_signatures(abi)
+        return with_decoded_signatures(self._abi)
 
     def __init__(self):
         """Create instance of ABI."""
         self._abi = self._load_abi()
-        self._method_abi_mapping = self._extract_mapping(
-            self._abi
-        )
+        self._method_abi_mapping = self._extract_mapping()
 
     def get_func_abi(
             self, function_sign: str, default: Optional[Any] = None

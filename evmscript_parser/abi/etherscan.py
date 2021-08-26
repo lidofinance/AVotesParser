@@ -6,13 +6,15 @@ import time
 import logging
 import requests
 
+import brownie
+
 from functools import lru_cache, partial
 from typing import (
-    Optional
+    Optional, Dict, Tuple
 )
 
 from .base import (
-    ABI, ABI_T
+    ABI, ABI_T, METHOD_ABI_MAPPING_T
 )
 
 # ============================================================================
@@ -123,6 +125,37 @@ def get_abi(
     ))
 
 
+@lru_cache(maxsize=CACHE_SIZE)
+def _punched_proxy() -> Dict[Tuple[str, str], str]:
+    return dict()
+
+
+def get_implementation_address(
+        proxy_address: str, proxy_abi: ABI_T, specific_net: str
+) -> str:
+    """Get address from behind proxy."""
+    storage = _punched_proxy()
+    key = (proxy_address, specific_net)
+
+    if key not in storage:
+        if not brownie.network.is_connected():
+            # WEB3_INFURA_PROJECT_ID should be set in environment.
+            logging.debug(
+                f'Connect to {specific_net}.'
+            )
+            brownie.network.connect(specific_net)
+
+        logging.debug(
+            f'Get address of implementation from {proxy_address} '
+            f'in {specific_net}.'
+        )
+        storage[key] = brownie.Contract.from_abi(
+            f'ProxyAt{proxy_address}', proxy_address, proxy_abi
+        ).implementation()
+
+    return storage[key]
+
+
 # ============================================================================
 # ============================== ABI =========================================
 # ============================================================================
@@ -158,3 +191,21 @@ class ABIEtherscan(ABI):
         return get_abi(
             self._api_key, self._address, self._specific_net, self._retries
         )
+
+    def _extract_mapping(self) -> METHOD_ABI_MAPPING_T:
+        names = {
+            entry.get('name', 'unknown'): entry
+            for entry in self._abi
+        }
+
+        if 'proxyType' in names and 'implementation' in names:
+            logging.debug(
+                f'Proxy punching for {self._address} '
+                f'in {self._specific_net}.'
+            )
+            self._address = get_implementation_address(
+                self._address, self._abi, self._specific_net
+            )
+            self._abi = self._load_abi()
+
+        return super()._extract_mapping()

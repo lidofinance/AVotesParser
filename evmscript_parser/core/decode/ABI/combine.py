@@ -7,7 +7,7 @@ from typing import Optional
 
 from .base import ABI_T
 from .etherscan import ABIProviderEtherscanApi
-from .local import ABIProviderLocal
+from .local import ABIProviderLocalOneFile
 
 from evmscript_parser.core.exceptions import (
     ABIEtherscanNetworkError, ABIEtherscanStatusCode
@@ -15,7 +15,7 @@ from evmscript_parser.core.exceptions import (
 
 
 class ABIProviderCombined(
-    ABIProviderLocal, ABIProviderEtherscanApi
+    ABIProviderLocalOneFile, ABIProviderEtherscanApi
 ):
     """
     Combined way of getting ABI
@@ -23,7 +23,7 @@ class ABIProviderCombined(
 
     def __init__(
             self,
-            api_key: str, interface_directory: str,
+            api_key: str, target_interface: str,
             specific_net: Optional[str] = None,
             retries: int = 5, proxy_punching: bool = True
     ):
@@ -31,8 +31,8 @@ class ABIProviderCombined(
         ABIProviderEtherscanApi.__init__(
             self, api_key, specific_net, retries, proxy_punching
         )
-        ABIProviderLocal.__init__(
-            self, interface_directory
+        ABIProviderLocalOneFile.__init__(
+            self, target_interface
         )
 
     def get_abi(self, address: str, *args, **kwargs) -> ABI_T:
@@ -47,6 +47,6 @@ class ABIProviderCombined(
                 f'Getting ABI through Etherscan API failed: '
                 f'{repr(err)}')
 
-        return ABIProviderLocal.get_abi(
+        return ABIProviderLocalOneFile.get_abi(
             *args, **kwargs
         )

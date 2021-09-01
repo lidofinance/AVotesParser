@@ -1,6 +1,13 @@
 # noqa
 from .etherscan import ABIProviderEtherscanApi
+from .combine import ABIProviderCombined
+from .local import (
+    ABIProviderLocalOneFile, ABIProviderLocal
+)
 
 __all__ = [
-    'ABIProviderEtherscanApi'
+    'ABIProviderEtherscanApi',
+    'ABIProviderLocalOneFile',
+    'ABIProviderCombined',
+    'ABIProviderLocal'
 ]

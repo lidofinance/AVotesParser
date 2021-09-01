@@ -42,11 +42,11 @@ class ABIProviderCombined(
                 self, address, *args, **kwargs
             )
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
-            logging.exception(
+            logging.debug(
                 f'ABIProviderCombined: '
                 f'Getting ABI through Etherscan API failed: '
                 f'{repr(err)}')
 
         return ABIProviderLocalOneFile.get_abi(
-            *args, **kwargs
+            self, *args, **kwargs
         )

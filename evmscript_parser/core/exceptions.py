@@ -59,3 +59,13 @@ class ABIEtherscanStatusCode(ABIGettingError):
               f'Message: {message}. ' \
               f'Result: {result}.'
         super().__init__(msg)
+
+
+class ABILocalFileNotExisted(ABIGettingError):
+    """
+    File with ABI specification does not exist.
+    """
+
+    def __init__(self, target_file: str):
+        msg = f'File does not exist: {target_file}.'
+        super().__init__(msg)

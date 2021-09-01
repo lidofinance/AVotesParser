@@ -90,7 +90,7 @@ def _send_query(
         try:
             response.raise_for_status()
         except requests.HTTPError as err:
-            raise ABIEtherscanNetworkError(repr(err))
+            raise ABIEtherscanNetworkError(str(err)) from err
 
         data = response.json()
 
@@ -203,8 +203,8 @@ class ABIProviderEtherscanApi(ABIProvider):
         :param args: None
         :param kwargs: None
         :return: List[Dict[str, Any]], ABI description.
-        :exception HTTPError in case of error at network layer.
-        :exception RuntimeError in case of error in api calls.
+        :exception ABIEtherscanNetworkError in case of error at network layer.
+        :exception ABIEtherscanStatusCode in case of error in api calls.
         """
         abi = get_abi(
             self._api_key, address, self._specific_net, self._retries

@@ -3,7 +3,7 @@ Decoding functions callings to human-readable format.
 """
 import web3
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from sha3 import keccak_256
 
@@ -59,7 +59,7 @@ def _gather_types(inputs: List[Dict[str, Any]]) -> List[str]:
     ]
 
 
-def with_decoded_signatures(
+def with_encoded_signatures(
         contract_abi: ABI_T
 ) -> METHOD_ABI_MAPPING_T:
     """Create mapping from function signatures to function descriptions."""
@@ -90,7 +90,7 @@ def with_decoded_signatures(
 def decode_function_call(
         contract_address: str, function_signature: str, call_data: str,
         abi_provider: ABIProvider
-) -> Call:
+) -> Optional[Call]:
     """
     Decode function call.
 
@@ -105,9 +105,11 @@ def decode_function_call(
         address=contract_address, singature=function_signature
     )
 
-    function_description = with_decoded_signatures(
+    function_description = with_encoded_signatures(
         abi
-    ).get(function_signature, None)
+    ).get(
+        function_signature, None
+    )
 
     if function_description is None:
         return function_description

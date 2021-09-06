@@ -4,4 +4,7 @@ import pkg_resources
 NAME = 'evmscript_parser'
 CLI_NAME = 'evmscript-parser'
 
-version = pkg_resources.get_distribution(NAME).version
+try:
+    version = pkg_resources.get_distribution(NAME).version
+except pkg_resources.DistributionNotFound:
+    version = 'v0.0.0'

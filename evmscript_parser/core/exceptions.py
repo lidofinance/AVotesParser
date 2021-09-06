@@ -67,5 +67,6 @@ class ABILocalFileNotExisted(ABIGettingError):
     """
 
     def __init__(self, target_file: str):
-        msg = f'File does not exist: {target_file}.'
+        """Prepare and forward error message."""
+        msg = f'File of interface does not exist: {target_file}.'
         super().__init__(msg)

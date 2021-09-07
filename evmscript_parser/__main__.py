@@ -1,24 +1,22 @@
 """
 CLI of EVM scripts parser.
 """
-import sys
-import logging
 import argparse
-
+import logging
+import sys
 from mimetypes import guess_type, types_map
 
-from .package import CLI_NAME
-from .core.parse import parse_script
+from .core.ABI import get_cached_etherscan_api
+from .core.ABI.utilities.etherscan import (
+    DEFAULT_NET, NET_URL_MAP
+)
 from .core.decode import decode_function_call
-from .core.decode.ABI import ABIProviderEtherscanApi
 from .core.exceptions import (
     ParseStructureError,
     ABIEtherscanNetworkError, ABIEtherscanStatusCode
 )
-
-from .core.decode.ABI.etherscan import (
-    DEFAULT_NET, NET_URL_MAP
-)
+from .core.parse import parse_script
+from .package import CLI_NAME
 
 
 def parse_args() -> argparse.Namespace:
@@ -84,23 +82,20 @@ def main():
         logging.error(f'Parsing error: {repr(err)}')
         sys.exit(1)
 
-    abi_provider = ABIProviderEtherscanApi(
-        token, args.net, args.retries
+    abi_storage = get_cached_etherscan_api(
+        token, args.net
     )
 
     calls = []
     for call in parsed.calls:
         try:
             calls.append(decode_function_call(
-                call.address, call.method_id, call.encoded_call_data,
-                abi_provider
+                call.address, call.method_id,
+                call.encoded_call_data, abi_storage
             ))
 
-        except ABIEtherscanNetworkError as err:
+        except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
             logging.error(f'Network layer error: {repr(err)}')
-
-        except ABIEtherscanStatusCode as err:
-            logging.error(f'API error: {repr(err)}')
 
     logging.info(f'Parsed:\n{repr(calls)}')
 

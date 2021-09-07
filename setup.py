@@ -23,6 +23,7 @@ setup(
             f'{CLI_NAME}=evmscript_parser.__main__:main'
         ]
     },
+    python_requires='>=3.8',
     install_requires=[
         'requests~=2.26.0',
         'pysha3~=1.0.0',

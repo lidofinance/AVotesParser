@@ -4,7 +4,7 @@ import pytest
 
 from evmscript_parser.core.decode import decode_function_call
 from evmscript_parser.core.ABI import get_cached_combined
-from evmscript_parser.core.ABI.storage import CachedStorage
+from evmscript_parser.core.ABI.storage import CachedStorage, ABIKey
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 INTERFACES = os.path.join(CUR_DIR, 'interfaces')
@@ -23,7 +23,6 @@ def test_etherscan_api(abi_storage, abi_positive_example):
     interface_name, contract, sign, name = abi_positive_example
     assert decode_function_call(
         contract, sign,
-        '', abi_storage,
-        combined_key=True, interface_name=interface_name
+        '', abi_storage
     ).function_name == name
-    assert (contract, interface_name) in abi_storage
+    assert ABIKey(contract, sign) in abi_storage

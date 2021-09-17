@@ -21,29 +21,20 @@ _CacheT = CachedStorage[Union[ABIKey, Tuple[ABIKey, ABIKey]], ABI]
 
 
 def decode_function_call(
-        contract_address: str, function_signature: str, call_data: str,
-        abi_storage: _CacheT, combined_key: bool = False,
-        interface_name: Optional[str] = None
+        contract_address: str, function_signature: str,
+        call_data: str, abi_storage: _CacheT
 ) -> Optional[Call]:
     """
     Decode function call.
 
-    :param contract_address: str, contract addres.
+    :param contract_address: str, contract address.
     :param function_signature: str, the first fourth bytes
                                     of function signature
     :param call_data: str, encoded call data.
     :param abi_storage: CachedStorage, storage of contracts ABI.
-    :param combined_key: bool, use address and interface-name as tuple
-                               or only address or name.
-    :param interface_name: Optional[str],
     :return: Call, decoded description of function calling.
     """
-    key = contract_address
-    if combined_key:
-        key = (key, interface_name)
-    else:
-        if interface_name is not None:
-            key = interface_name
+    key = ABIKey(contract_address, function_signature)
 
     abi = abi_storage[key]
     function_description = abi.func_storage.get(function_signature, None)

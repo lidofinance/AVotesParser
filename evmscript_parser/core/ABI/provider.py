@@ -11,7 +11,7 @@ from evmscript_parser.core.exceptions import (
 )
 
 from .storage import (
-    ABIKey, ABI, ABI_T,
+    ABIKey, ABI,
     CachedStorage
 )
 from .utilities.etherscan import (
@@ -35,12 +35,12 @@ class ABIProvider(ABC):
     Base class for ABI providers.
     """
 
-    def __call__(self, key: ABIKey) -> ABI_T:
+    def __call__(self, key: ABIKey) -> ABI:
         """Return ABI for key."""
         return self.get_abi(key)
 
     @abstractmethod
-    def get_abi(self, key: ABIKey) -> ABI_T:
+    def get_abi(self, key: ABIKey) -> ABI:
         """Return ABI."""
         pass
 
@@ -57,7 +57,7 @@ class ABIProviderEtherscanAPI(ABIProvider):
 
         self._retries = 3
 
-    def get_abi(self, key: ABIKey) -> ABI_T:
+    def get_abi(self, key: ABIKey) -> ABI:
         """
         Return ABI from Etherscan API.
 
@@ -67,7 +67,8 @@ class ABIProviderEtherscanAPI(ABIProvider):
         :exception ABIEtherscanStatusCode in case of error in api calls.
         """
         abi = get_abi(
-            self._api_key, key, self._net, self._retries
+            self._api_key, key.ContractAddress,
+            self._net, self._retries
         )
 
         proxy_type_code = 1
@@ -87,15 +88,16 @@ class ABIProviderEtherscanAPI(ABIProvider):
                     f'Proxy punching for {key} '
                     f'in {self._net}'
                 )
-                key = get_implementation_address(
-                    key, abi, self._net
+                address = get_implementation_address(
+                    key.ContractAddress, abi, self._net
                 )
                 abi = get_abi(
-                    self._api_key, key, self._net, self._retries
+                    self._api_key, address,
+                    self._net, self._retries
                 )
                 break
 
-        return abi
+        return ABI(raw=abi, func_storage=index_function_description(abi))
 
 
 class ABIProviderLocalDirectory(ABIProvider):
@@ -105,11 +107,23 @@ class ABIProviderLocalDirectory(ABIProvider):
 
     def __init__(self, interfaces_directory: str):
         """Prepare mapping from files names to paths."""
-        self._interfaces = get_all_files(
+        interfaces = get_all_files(
             interfaces_directory, '*.json'
         )
 
-    def get_abi(self, key: ABIKey) -> ABI_T:
+        self._interfaces = {}
+        for interface in interfaces.values():
+            abi = read_abi_from_json(interface)
+            indexed_func_descriptions = index_function_description(
+                abi
+            )
+            for sign in indexed_func_descriptions:
+                self._interfaces[sign] = ABI(
+                    raw=abi,
+                    func_storage=indexed_func_descriptions
+                )
+
+    def get_abi(self, key: ABIKey) -> ABI:
         """
         Return ABI from interface file.
 
@@ -118,10 +132,10 @@ class ABIProviderLocalDirectory(ABIProvider):
         :exception ABILocalFileNotExisted in case of interface file does not
                    exist.
         """
-        if key in self._interfaces:
-            return read_abi_from_json(self._interfaces[key])
+        if key.FunctionSignature in self._interfaces:
+            return self._interfaces[key.FunctionSignature]
 
-        raise ABILocalFileNotExisted(key)
+        raise ABILocalFileNotExisted(key.FunctionSignature)
 
 
 class ABIProviderCombined(
@@ -139,7 +153,7 @@ class ABIProviderCombined(
         ABIProviderEtherscanAPI.__init__(self, api_key, net)
         ABIProviderLocalDirectory.__init__(self, interfaces_directory)
 
-    def get_abi(self, key: Tuple[ABIKey, ABIKey]) -> ABI_T:
+    def get_abi(self, key: ABIKey) -> ABI:
         """
         Return ABI.
 
@@ -149,42 +163,25 @@ class ABIProviderCombined(
         :exception ABILocalFileNotExisted in case of interface file does not
                    exist.
         """
-        address, interface_name = key
         try:
-            return ABIProviderEtherscanAPI.get_abi(self, address)
+            return ABIProviderEtherscanAPI.get_abi(self, key)
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
             logging.debug(f'Fail with getting ABI from API: {str(err)}')
-            return ABIProviderLocalDirectory.get_abi(self, interface_name)
-
-
-class ABIProcessing:
-    """
-    Convert ABI to mapping from functions signatures to their descriptions.
-    """
-
-    def __call__(self, abi: ABI_T) -> ABI:
-        """Convert ABI to mapping."""
-        return ABI(raw=abi, func_storage=index_function_description(abi))
+            return ABIProviderLocalDirectory.get_abi(self, key)
 
 
 def get_cached_etherscan_api(
         api_key: str, net: str
 ) -> CachedStorage[ABIKey, ABI]:
     """Return prepared instance of CachedStorage with API provider."""
-    provider = ABIProviderEtherscanAPI(api_key, net)
-    processing = ABIProcessing()
-
-    return CachedStorage(lambda x: processing(provider(x)))
+    return CachedStorage(ABIProviderEtherscanAPI(api_key, net))
 
 
 def get_cached_local_interfaces(
         interfaces_directory: str
 ) -> CachedStorage[ABIKey, ABI]:
     """Return prepared instance of CachedStorage with local files provider."""
-    provider = ABIProviderLocalDirectory(interfaces_directory)
-    processing = ABIProcessing()
-
-    return CachedStorage(lambda x: processing(provider(x)))
+    return CachedStorage(ABIProviderLocalDirectory(interfaces_directory))
 
 
 def get_cached_combined(
@@ -192,9 +189,6 @@ def get_cached_combined(
         interfaces_directory: str
 ) -> CachedStorage[Tuple[ABIKey, ABIKey], ABI]:
     """Return prepared instance of CachedStorage with combined provider."""
-    provider = ABIProviderCombined(
+    return CachedStorage(ABIProviderCombined(
         api_key, net, interfaces_directory
-    )
-    processing = ABIProcessing()
-
-    return CachedStorage(lambda x: processing(provider(x)))
+    ))

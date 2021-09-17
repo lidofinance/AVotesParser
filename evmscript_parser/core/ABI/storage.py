@@ -4,7 +4,7 @@ Storage with cache for results of provider calling.
 from typing import (
     Generic, TypeVar,
     Callable, Dict,
-    Union, Any, List
+    Any, List
 )
 from collections import namedtuple
 
@@ -44,16 +44,16 @@ class CachedStorage(Generic[_KT, _VT]):
         return len(self._storage)
 
 
-_ContractAddress = str
-_ContractName = str
+ABI_T = List[Dict[str, Any]]
 
 _FunctionSignature = str
 _FunctionDescription = Dict[str, Any]
-
-ABI_T = List[Dict[str, Any]]
-ABIKey = Union[_ContractName, _ContractAddress]
 FuncStorage = Dict[_FunctionSignature, _FunctionDescription]
 
+ABIKey = namedtuple(
+    'ABIKey', field_names=['ContractAddress', 'FunctionSignature'],
+    rename=False
+)
 ABI = namedtuple(
     'ABI', field_names=['raw', 'func_storage'], rename=False
 )

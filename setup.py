@@ -20,7 +20,7 @@ setup(
     ),
     entry_points={
         'console_scripts': [
-            f'{CLI_NAME}=evmscript_parser.__main__:main'
+            f'{CLI_NAME}=evmscript_parser.cli:main'
         ]
     },
     python_requires='>=3.8',

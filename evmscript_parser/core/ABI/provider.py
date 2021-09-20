@@ -162,12 +162,10 @@ class ABIProviderCombined(
                    exist.
         """
         try:
-            abi = ABIProviderEtherscanAPI.get_abi(self, key)
-            if abi is not None:
-                return abi
+            return ABIProviderEtherscanAPI.get_abi(self, key)
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
             logging.debug(f'Fail on getting ABI from API: {str(err)}')
-        return ABIProviderLocalDirectory.get_abi(self, key)
+            return ABIProviderLocalDirectory.get_abi(self, key)
 
 
 def get_cached_etherscan_api(

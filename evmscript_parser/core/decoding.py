@@ -1,17 +1,17 @@
 """
 High level utilities for script decoding and printing.
 """
-from brownie.utils import color
-
 from typing import Union, List
 
-from .parse import parse_script
-from .decode import decode_function_call
+from brownie.utils import color
+
 from .ABI.storage import CachedStorage
+from .decode import decode_function_call
 from .decode.structure import Call, FuncInput
 from .exceptions import (
     ParseStructureError, ABIEtherscanStatusCode, ABIEtherscanNetworkError
 )
+from .parse import parse_script
 
 
 def decode_evm_script(
@@ -37,10 +37,7 @@ def decode_evm_script(
 
             for inp in call.inputs:
                 if inp.type == 'bytes' and inp.name == '_evmScript':
-                    inp.value = decode_evm_script(
-                        inp.value.hex(),
-                        abi_storage
-                    )
+                    inp.value = decode_evm_script(inp.value, abi_storage)
                     break
 
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:

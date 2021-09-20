@@ -3,21 +3,20 @@ Observation for the last N running votes at the aragon voting.
 """
 import argparse
 import logging
-
-import brownie
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import lru_cache, partial
 from mimetypes import guess_type, types_map
 from typing import Union, List
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from .core.decode.structure import Call
-from .core.ABI.storage import CachedStorage
+import brownie
+
 from .core.ABI import get_cached_etherscan_api
+from .core.ABI.storage import CachedStorage
 from .core.ABI.utilities.etherscan import (
     DEFAULT_NET, NET_URL_MAP,
     get_abi, get_implementation_address
 )
+from .core.decode.structure import Call
 from .core.decoding import decode_evm_script, calls_info_pretty_print
 from .package import CLI_NAME
 
@@ -135,23 +134,30 @@ def main():
     )
 
     _parse_voting = partial(parse_voting, aragon_voting, abi_storage)
+    number_offset = last_vote_number - args.n
     with ThreadPoolExecutor(10) as executor:
         parsed_votes = {
-            executor.submit(_parse_voting, vote_number): vote_number
+            executor.submit(
+                _parse_voting,
+                vote_number + number_offset
+            ): vote_number
             for vote_number in range(
-                last_vote_number - args.n, last_vote_number
+                0, args.n
             )
         }
+        results = [None] * len(parsed_votes)
         for future in as_completed(parsed_votes):
             number = parsed_votes[future]
-            parsed_vote = future.result()
+            results[number] = future.result()
 
-            total = len(parsed_vote)
-            print(f'Voting number {number}.')
-            for ind, call in enumerate(parsed_vote):
-                print(f'Point {ind + 1}/{total}')
-                print(calls_info_pretty_print(call))
-            print('-----------------------------------------------------\n\n')
+    for num, parsed_vote in enumerate(results):
+        number = num + number_offset
+        total = len(parsed_vote)
+        print(f'Voting number {number}.')
+        for ind, call in enumerate(parsed_vote):
+            print(f'Point {ind + 1}/{total}')
+            print(calls_info_pretty_print(call))
+        print('-----------------------------------------------------\n\n')
 
 
 if __name__ == '__main__':

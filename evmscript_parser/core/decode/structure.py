@@ -15,6 +15,11 @@ class FuncInput:
     type: str
     value: Any
 
+    def __post_init__(self):
+        """Conversion from raw bytes to string for bytes values."""
+        if callable(getattr(self.value, 'hex', None)):
+            self.value = self.value.hex()
+
 
 @dataclass
 class Call:

@@ -48,7 +48,7 @@ def _gather_types(inputs: List[Dict[str, Any]]) -> List[str]:
             ))
             return f'({t})'
 
-        return entity['type']
+        return entity.get('type', 'unknown')
 
     return [
         __extract_type(inp)
@@ -62,7 +62,7 @@ def index_function_description(
     """Create mapping from function signatures to function descriptions."""
 
     def __is_function(entity: Dict[str, Any]) -> bool:
-        t = entity['type']
+        t = entity.get('type', 'unknown')
         if t == 'function' or t == 'receive':
             return True
 
@@ -70,8 +70,8 @@ def index_function_description(
 
     return {
         _get_encoded_signature(
-            entry['name'],
-            _gather_types(entry['inputs'])
+            entry.get('name', 'unknown'),
+            _gather_types(entry.get('inputs', []))
         ): entry
         for entry
         in filter(

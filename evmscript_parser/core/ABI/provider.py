@@ -3,13 +3,11 @@ Base class for ABI hierarchy.
 """
 import logging
 from abc import ABC, abstractmethod
-
 from typing import Tuple
 
 from evmscript_parser.core.exceptions import (
     ABILocalFileNotExisted, ABIEtherscanNetworkError, ABIEtherscanStatusCode
 )
-
 from .storage import (
     ABIKey, ABI,
     CachedStorage
@@ -166,7 +164,7 @@ class ABIProviderCombined(
         try:
             return ABIProviderEtherscanAPI.get_abi(self, key)
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
-            logging.debug(f'Fail with getting ABI from API: {str(err)}')
+            logging.debug(f'Fail on getting ABI from API: {str(err)}')
             return ABIProviderLocalDirectory.get_abi(self, key)
 
 

@@ -1,10 +1,10 @@
 """Settings for tests."""
+from functools import partial
+from typing import List
+
 import pytest
 
-from typing import List
-from functools import partial
-
-from examples import Parsing, ABIEtherscan
+from examples import ABIEtherscan
 
 
 def _parametrize(
@@ -35,8 +35,6 @@ def pytest_generate_tests(metafunc):
     """Parametrize tests."""
     parametrize = partial(_parametrize, metafunc)
     for fixture_name, cases in [
-        ('positive_example', Parsing.positive_examples),
-        ('negative_example', Parsing.negative_examples),
         ('abi_positive_example', ABIEtherscan.positive_examples)
     ]:
         parametrize(fixture_name, cases)

@@ -13,7 +13,7 @@ INTERFACES = os.path.join(CUR_DIR, 'interfaces')
 
 FunctionCall = namedtuple(
     'FunctionCall',
-    field_names=['address', 'signature', 'name', 'call_data'],
+    field_names=['address', 'signature', 'name', 'call_data', 'was'],
 )
 
 positive_examples = (
@@ -22,38 +22,77 @@ positive_examples = (
         address='0xdac17f958d2ee523a2206206994597c13d831ec7',
         signature='0x18160ddd',
         name='totalSupply',
-        call_data=''
+        call_data='',
+        was=False
     ),
     # Lido
     FunctionCall(
         address='0xae7ab96520de3a18e5e111b5eaab095312d7fe84',
         signature='0x18160ddd',
         name='totalSupply',
-        call_data=''
+        call_data='',
+        was=False
+    ),
+    # Lido finance address
+    FunctionCall(
+        address='0x75c7b1D23f1cad7Fb4D60281d7069E46440BC179',
+        signature='0x33ea3dc8',
+        name='getTransaction',
+        call_data='1'.zfill(64),
+        was=False
+    ),
+    # Lido, second call
+    FunctionCall(
+        address='0xae7ab96520de3a18e5e111b5eaab095312d7fe84',
+        signature='0x18160ddd',
+        name='totalSupply',
+        call_data='',
+        was=True
+    ),
+    # Lido, wrong address, should be resolved through local ABIs.
+    FunctionCall(
+        address='0x75c7b1D23f1cad7Fb4D60281d7069E46440BC179',
+        signature='0x18160ddd',
+        name='totalSupply',
+        call_data='',
+        was=False
     )
 )
 
 
-@pytest.fixture(scope='module', params=positive_examples)
+@pytest.fixture(
+    scope='module', params=positive_examples,
+    ids=lambda x: f'{x.address}:{x.signature}'
+)
 def positive_example(request):
     """Get positive test case for call decoding."""
     return request.param
 
 
 @pytest.fixture(scope='module')
-def abi_storage(api_key: str) -> CachedStorage:
+def abi_storage(
+        api_key: str, infura_prt_id: str, target_net: str
+) -> CachedStorage:
     """Return prepared abi storage."""
     return get_cached_combined(
-        api_key, 'goerli', INTERFACES
+        api_key, target_net, INTERFACES
     )
+
+
+def test_combined_storage(abi_storage):
+    """Run tests for prepared combined storage."""
+    interfaces = abi_storage._provider._interfaces
+    assert len(interfaces) > 0
+    assert '0x18160ddd' in interfaces
+    assert '0x35390714' in interfaces
 
 
 def test_etherscan_api(abi_storage, positive_example: FunctionCall):
     """Run tests for getting ABI from Etherscan API."""
+    key = ABIKey(positive_example.address, positive_example.signature)
+    assert (key in abi_storage) is positive_example.was
     assert decode_function_call(
         positive_example.address, positive_example.signature,
-        positive_example.call_data, abi_storage
+        positive_example.call_data, abi_storage,
     ).function_name == positive_example.name
-    assert ABIKey(
-        positive_example.address, positive_example.signature
-    ) in abi_storage
+    assert key in abi_storage

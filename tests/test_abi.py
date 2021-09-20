@@ -49,12 +49,20 @@ positive_examples = (
         call_data='',
         was=True
     ),
-    # Lido, wrong address, should be resolved through local ABIs.
+    # Lido, wrong address, target signature not in ABI
     FunctionCall(
         address='0x75c7b1D23f1cad7Fb4D60281d7069E46440BC179',
         signature='0x18160ddd',
-        name='totalSupply',
+        name=None,
         call_data='',
+        was=False
+    ),
+    # Lido node operator registry
+    FunctionCall(
+        address='0x9D4AF1Ee19Dad8857db3a45B0374c81c8A1C6320',
+        signature='0x62dcfda1',
+        name='getRewardsDistribution',
+        call_data='1'.zfill(64),
         was=False
     )
 )
@@ -85,14 +93,19 @@ def test_combined_storage(abi_storage):
     assert len(interfaces) > 0
     assert '0x18160ddd' in interfaces
     assert '0x35390714' in interfaces
+    assert '0x62dcfda1' in interfaces
 
 
 def test_etherscan_api(abi_storage, positive_example: FunctionCall):
     """Run tests for getting ABI from Etherscan API."""
     key = ABIKey(positive_example.address, positive_example.signature)
     assert (key in abi_storage) is positive_example.was
-    assert decode_function_call(
+    decoded = decode_function_call(
         positive_example.address, positive_example.signature,
         positive_example.call_data, abi_storage,
-    ).function_name == positive_example.name
+    )
+    if positive_example.name:
+        assert decoded.function_name == positive_example.name
+    else:
+        assert decoded is None
     assert key in abi_storage

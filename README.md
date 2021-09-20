@@ -3,8 +3,9 @@
 -----------------------------------------
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/DmitIv/EVMScriptParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/DmitIv/EVMScriptParser/actions/workflows/github-actions.yml)
-[![PyPI version](https://badge.fury.io/py/evmscript-parser.svg)](https://badge.fury.io/py/evmscript-parser)
+[![Tests](https://github.com/lidofinance/EVMScriptParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/EVMScriptParser/actions/workflows/github-actions.yml)
+[![PyPi version](https://pypip.in/v/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
+[![PyPi downloads](https://pypip.in/d/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
 
 ### About
 

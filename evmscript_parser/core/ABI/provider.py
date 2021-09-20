@@ -3,13 +3,11 @@ Base class for ABI hierarchy.
 """
 import logging
 from abc import ABC, abstractmethod
-
 from typing import Tuple
 
 from evmscript_parser.core.exceptions import (
     ABILocalFileNotExisted, ABIEtherscanNetworkError, ABIEtherscanStatusCode
 )
-
 from .storage import (
     ABIKey, ABI,
     CachedStorage
@@ -166,21 +164,32 @@ class ABIProviderCombined(
         try:
             return ABIProviderEtherscanAPI.get_abi(self, key)
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
-            logging.debug(f'Fail with getting ABI from API: {str(err)}')
+            logging.debug(f'Fail on getting ABI from API: {str(err)}')
             return ABIProviderLocalDirectory.get_abi(self, key)
 
 
 def get_cached_etherscan_api(
         api_key: str, net: str
 ) -> CachedStorage[ABIKey, ABI]:
-    """Return prepared instance of CachedStorage with API provider."""
+    """
+    Return prepared instance of CachedStorage with API provider.
+
+    :param api_key: str, Etherscan API token.
+    :param net: str, the name of target network.
+    :return: CachedStorage[ABIKey, ABI]
+    """
     return CachedStorage(ABIProviderEtherscanAPI(api_key, net))
 
 
 def get_cached_local_interfaces(
         interfaces_directory: str
 ) -> CachedStorage[ABIKey, ABI]:
-    """Return prepared instance of CachedStorage with local files provider."""
+    """
+    Return prepared instance of CachedStorage with local files provider.
+
+    :param interfaces_directory: str, path to directory with interfaces.
+    :return: CachedStorage[ABIKey, ABI]
+    """
     return CachedStorage(ABIProviderLocalDirectory(interfaces_directory))
 
 
@@ -188,7 +197,14 @@ def get_cached_combined(
         api_key: str, net: str,
         interfaces_directory: str
 ) -> CachedStorage[Tuple[ABIKey, ABIKey], ABI]:
-    """Return prepared instance of CachedStorage with combined provider."""
+    """
+    Return prepared instance of CachedStorage with combined provider.
+
+    :param api_key: str, Etherscan API token.
+    :param net: str, the name of target network.
+    :param interfaces_directory: str, path to directory with interfaces.
+    :return: CachedStorage[ABIKey, ABI]
+    """
     return CachedStorage(ABIProviderCombined(
         api_key, net, interfaces_directory
     ))

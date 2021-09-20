@@ -2,7 +2,7 @@
 import pkg_resources
 
 NAME = 'evmscript_parser'
-CLI_NAME = 'evmscript-parser'
+CLI_NAME = 'avotes-parser'
 
 try:
     version = pkg_resources.get_distribution(NAME).version

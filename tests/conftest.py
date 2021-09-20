@@ -1,45 +1,8 @@
 """Settings for tests."""
+import os
+
+import brownie.network
 import pytest
-
-from typing import List
-from functools import partial
-
-from examples import Parsing, ABIEtherscan
-
-
-def _parametrize(
-        metafunc, fixture_name: str, cases: List
-) -> None:
-    if fixture_name in metafunc.fixturenames:
-        if hasattr(_parametrize, fixture_name):
-            cases, names = getattr(
-                _parametrize, fixture_name
-            )
-
-        else:
-            names = [
-                f'case_{ind}'
-                for ind in range(len(cases))
-            ]
-
-            setattr(
-                _parametrize, fixture_name, (cases, names)
-            )
-
-        metafunc.parametrize(
-            fixture_name, cases, ids=names
-        )
-
-
-def pytest_generate_tests(metafunc):
-    """Parametrize tests."""
-    parametrize = partial(_parametrize, metafunc)
-    for fixture_name, cases in [
-        ('positive_example', Parsing.positive_examples),
-        ('negative_example', Parsing.negative_examples),
-        ('abi_positive_example', ABIEtherscan.positive_examples)
-    ]:
-        parametrize(fixture_name, cases)
 
 
 def pytest_addoption(parser):
@@ -48,9 +11,34 @@ def pytest_addoption(parser):
         '--apikey', type=str,
         default=None, help='API key for Etherscan.'
     )
+    parser.addoption(
+        '--infura-id', type=str,
+        default=None, help='Infura project ID '
+                           'for interaction with goerli.'
+    )
 
 
 @pytest.fixture(scope='session')
 def api_key(pytestconfig) -> str:
     """Return apikey from CLI parameters."""
     return pytestconfig.getoption('apikey')
+
+
+@pytest.fixture(scope='session')
+def infura_prt_id(pytestconfig) -> str:
+    """Return WEB3_INFURA_PROJECT_ID."""
+    return pytestconfig.getoption('infura_id')
+
+
+@pytest.fixture(scope='session')
+def target_net() -> str:
+    """Get target net."""
+    return 'goerli'
+
+
+@pytest.fixture(scope='session', autouse=True)
+def prepare_brownie_network(infura_prt_id):
+    """Set INFURA environment variable and disconnect from dev net."""
+    os.environ['WEB3_INFURA_PROJECT_ID'] = infura_prt_id
+    if brownie.network.is_connected():
+        brownie.network.disconnect()

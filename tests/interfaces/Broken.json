@@ -1,0 +1,143 @@
+[
+	{
+		"constant": true,
+		"inputs": [],
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "_totalSupply",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "f",
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"n": "_owner",
+				"t": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "nonpayable"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "basisPointsRate",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "nonpayable"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	}
+]

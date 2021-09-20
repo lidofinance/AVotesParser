@@ -48,7 +48,7 @@ def _gather_types(inputs: List[Dict[str, Any]]) -> List[str]:
             ))
             return f'({t})'
 
-        return entity['type']
+        return entity.get('type', 'unknown')
 
     return [
         __extract_type(inp)

@@ -40,4 +40,5 @@ def target_net() -> str:
 def prepare_brownie_network(infura_prt_id):
     """Set INFURA environment variable and disconnect from dev net."""
     os.environ['WEB3_INFURA_PROJECT_ID'] = infura_prt_id
-    brownie.network.disconnect()
+    if brownie.network.is_connected():
+        brownie.network.disconnect()

@@ -1,9 +1,9 @@
-# EVMScriptParser
+# AVotesParser
 
 -----------------------------------------
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/lidofinance/EVMScriptParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/EVMScriptParser/actions/workflows/github-actions.yml)
+[![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
 [![PyPi version](https://pypip.in/v/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
 [![PyPi downloads](https://pypip.in/d/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
 
@@ -69,9 +69,6 @@ Name: setNodeOperatorStakingLimit
 Inputs:
 _id: uint256 = 7
 _stakingLimit: uint64 = 5000
-
-...
-------------------------------------------------
 
 ...
 ```

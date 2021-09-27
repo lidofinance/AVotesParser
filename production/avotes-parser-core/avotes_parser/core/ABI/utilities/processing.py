@@ -5,7 +5,7 @@ from typing import Dict, List, Any
 
 from sha3 import keccak_256
 
-from evmscript_parser.core.ABI.storage import (
+from ..storage import (
     ABI_T, FuncStorage
 )
 

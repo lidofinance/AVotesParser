@@ -1,13 +1,12 @@
 """
 Utilities for work with local interfaces.
 """
-import os
-import json
 import glob
-
+import json
+import os
 from typing import Dict, Optional
 
-from evmscript_parser.core.ABI.storage import ABI_T
+from ..storage import ABI_T
 
 _NameT = str
 _PathT = str

@@ -3,9 +3,9 @@ from collections import namedtuple
 
 import pytest
 
-from evmscript_parser.core.exceptions import ParseMismatchLength
-from evmscript_parser.core.parse import parse_script, EVMScript, SingleCall
-from evmscript_parser.core.script_specification import HEX_PREFIX
+from avotes_parser.core import parse_script, EVMScript, EncodedCall
+from avotes_parser.core.parsing import ParseMismatchLength
+from avotes_parser.core.spec import HEX_PREFIX
 
 ParsingTestCase = namedtuple(
     'ParsingTestCase', field_names=['raw_script', 'parsed_script']
@@ -50,7 +50,7 @@ positive_examples = (
         parsed_script=EVMScript(
             spec_id='00000001',
             calls=[
-                SingleCall(
+                EncodedCall(
                     address='7899ef901ed9b331baf7759c15d2e8728e8c2a2c',
                     call_data_length=68,
                     method_id='ae962acf',
@@ -77,7 +77,7 @@ positive_examples = (
         parsed_script=EVMScript(
             spec_id='00000001',
             calls=[
-                SingleCall(
+                EncodedCall(
                     address='8EcF1A208E79B300C33895B62462ffb5b55627E5',
                     call_data_length=36,
                     method_id='945233e2',
@@ -87,7 +87,7 @@ positive_examples = (
                         '29c8c708a12827f3'
                     )
                 ),
-                SingleCall(
+                EncodedCall(
                     address='8EcF1A208E79B300C33895B62462ffb5b55627E5',
                     call_data_length=36,
                     method_id='945233e2',
@@ -108,7 +108,7 @@ positive_examples = (
         parsed_script=EVMScript(
             spec_id='00000001',
             calls=[
-                SingleCall(
+                EncodedCall(
                     address='07804b6667d649c819dfa94af50c782c26f5abc3',
                     call_data_length=36,
                     method_id='945233e2',
@@ -144,7 +144,7 @@ positive_examples = (
         parsed_script=EVMScript(
             spec_id='00000001',
             calls=[
-                SingleCall(
+                EncodedCall(
                     address='07804b6667d649c819dfa94af50c782c26f5abc3',
                     call_data_length=264,
                     method_id='f153cc32',

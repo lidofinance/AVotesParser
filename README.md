@@ -1,24 +1,25 @@
-# EVMScriptParser
+# AVotesParser
 
 -----------------------------------------
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/lidofinance/EVMScriptParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/EVMScriptParser/actions/workflows/github-actions.yml)
+[![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
 [![PyPi version](https://pypip.in/v/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
 [![PyPi downloads](https://pypip.in/d/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
 
 ### About
 
-CLI utility `avotes-parser` for parsing the last N running votes on target
-aragon application. Utility is based on package `evmscript_parser` for 
-parsing and decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
+CLI utility `avotes-parser` for parsing the last N running votes for target
+aragon application. Utility is based on package `avotes-parser-core` for
+parsing and
+decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
 
 ### Installation
 
 1. From PyPi:
 
 ```shell
-pip install evmscript-parser
+pip install avotes-parser-cli
 ```
 
 2. From repository:
@@ -26,57 +27,63 @@ pip install evmscript-parser
 ```shell
 git clone https://github.com/DmitIv/EVMScriptParser.git
 cd EVMScriptParser
+cd production/avotes-parser-core
+python setup.py install
+cd ../avotes-parser-cli
 python setup.py install
 ```
 
 ### Usage
 
 ```shell
-avotes-parser --help
-usage: avotes-parser [-h] [-n N] [--net {mainnet,goerli,kovan,rinkebay,ropsten}] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--debug] [--retries RETRIES] apitoken
+usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,kovan,rinkebay,ropsten}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
 
-Observation for the last N running votes at the aragon voting.
-
-positional arguments:
-  apitoken              Etherscan API key as string or a path to txt file with it.
+Parsing and decoding aragon votes. Prepare human-readable representation of the last N votes for a aragon application with a specific address in a target net.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n N                  Parse last N votes.
-  --net {mainnet,goerli,kovan,rinkebay,ropsten}
-                        net name is case-insensitive, default is mainnet
+  --apitoken APITOKEN   Etherscan API key as string or a path to txt file with it. (default: None)
+  --infura INFURA       Infura project ID. (default: None)
+  -n N                  Parse last N votes. (default: 10)
   --aragon-voting-address ARAGON_VOTING_ADDRESS
-                        Address of aragon voting contract
-  --debug               Show debug messages
-  --retries RETRIES     Number of retries of calling Etherscan API.
+                        Address of aragon voting contract. (default: 0x2e59A20f205bB85a89C53f1936454680651E618e)
+  --net {mainnet,goerli,kovan,rinkebay,ropsten}
+                        Net name is case-insensitive. (default: mainnet)
+  --retries RETRIES     Number of retries of calling Etherscan API. (default: 5)
+  --num-workers NUM_WORKERS
+                        Number of asynchronous parsing tasks. (default: 10)
+  --debug               Show debug messages (default: False)
 ```
 
 Example of running for the last vote:
 
 ```shell
-$ WEB3_INFURA_PROJECT_ID=$WEB3_INFURA_PROJECT_ID avotes-parser $ETHERSCAN_API_KEY -n 1
+$ avotes-parser --infura $WEB3_INFURA_PROJECT_ID --apitoken $ETHERSCAN_API_TOKEN -n 1
 
-Voting number 89.
-Point 1/9
-Contract: 0x3e40d73eb977dc6a537af587d48316fee66e9c8c
-Function: forward
+Voting #90.
+Point 1/4.
+Function call
+Contract: 0x55032650b14df07b85bf18a3a3ec8e0af2e028d5
+Signature: 0xae962acf
+Name: setNodeOperatorStakingLimit
 Inputs:
-_evmScript: bytes = [
-   Contract: 0x1dd909cddf3dbe61ac08112dc0fdf2ab949f79d8
-   Function: set_rewards_limit_per_period
-   Inputs:
-   _new_limit: uint256 = 75000000000000000000000
-]
+_id: uint256 = 7
+_stakingLimit: uint64 = 5000
+
 ...
 ```
 
-Before using you should to make your [Infura project](https://eth-brownie.readthedocs.io/en/stable/network-management.html#using-infura) and to set its id value through `WEB3_INFURA_PROJECT_ID`.
-Also, you need to create [Etherscan API token](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics#creating-an-api-key).
+Before using you should to make
+your [Infura project](https://eth-brownie.readthedocs.io/en/stable/network-management.html#using-infura)
+and to set its id value through `WEB3_INFURA_PROJECT_ID`. Also, you need to
+create [Etherscan API token](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics#creating-an-api-key)
+.
 
-### `evmscript_parser` package
+### `avotes-parser-core` package
 
-The core functionality of package is divided into the `parsing` and the `decoding` parts. Parsing is a conversion from raw bytes string to the prepared structure `EVMScript`. 
-Parsing function: 
+The core functionality of package is divided into the `parsing` and
+the `decoding` parts. Parsing is a conversion from raw bytes string to the
+prepared structure `EVMScript`. Parsing function:
 
 ```python
 def parse_script(encoded_script: str) -> EVMScript:
@@ -88,10 +95,15 @@ def parse_script(encoded_script: str) -> EVMScript:
     """
 ```
 
-Located in [`evmscript_parser.core.parse`](evmscript_parser/core/parse/action.py) sub-package.
+Located
+in [`avotes_parser.core`](production/avotes-parser-core/avotes_parser/core/parsing.py)
+sub-package.
 
-For getting the sole decoded functions call should be used `decode_function_call` 
-which is located in [`evmscript_parser.core.decode`](evmscript_parser/core/decode/action.py) sub-package.
+For getting the sole decoded functions call should be
+used `decode_function_call`
+which is located
+in [`avotes_parser.core`](production/avotes-parser-core/avotes_parser/core/decoding.py)
+sub-package.
 
 ```python
 def decode_function_call(
@@ -113,6 +125,7 @@ def decode_function_call(
 `abi_storage` is the one of prepared cached abi storages:
 
 - `CachedStorage` based on Etherscan API
+
 ```python
 def get_cached_etherscan_api(
         api_key: str, net: str
@@ -127,6 +140,7 @@ def get_cached_etherscan_api(
 ```
 
 - `CachedStorage` based on local directory with interfaces files.
+
 ```python
 def get_cached_local_interfaces(
         interfaces_directory: str
@@ -139,7 +153,9 @@ def get_cached_local_interfaces(
     """
 ```
 
-- `CachedStorage` based on combination of Etherscan API and local directory providers.
+- `CachedStorage` based on combination of Etherscan API and local directory
+  providers.
+
 ```python
 def get_cached_combined(
         api_key: str, net: str,
@@ -155,7 +171,10 @@ def get_cached_combined(
     """
 ```
 
-All this function are located in [`evmscript_parser.core.ABI`](evmscript_parser/core/ABI/provider.py) sub-package.
+All this function are located
+in [`avotes_parser.core.ABI`](production/avotes-parser-core/avotes_parser/core/ABI/provider.py)
+sub-package.
 
-More detailed examples of package usage you can see in 
-[`cli.py`](evmscript_parser/cli.py) and [`decoding.py`](evmscript_parser/core/decoding.py).
+More detailed examples of package usage you can find in
+[`utilities.py`](production/avotes-parser-cli/avotes_parser/cli/utilities.py)
+of `avotes-parser` CLI tool.

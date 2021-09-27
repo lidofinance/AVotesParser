@@ -2,19 +2,16 @@
 Getting contracts ABI through Etherscan API.
 """
 import json
-import time
 import logging
-import requests
-
-import brownie
-
+import time
 from functools import lru_cache, partial
 from typing import Dict, Tuple
 
-from evmscript_parser.core.exceptions import (
-    ABIEtherscanNetworkError, ABIEtherscanStatusCode
-)
-from evmscript_parser.core.ABI.storage import ABI_T
+import brownie
+import requests
+
+from .exceptions import ABIEtherscanNetworkError, ABIEtherscanStatusCode
+from ..storage import ABI_T
 
 # ============================================================================
 # ===================== Constants ============================================

@@ -4,9 +4,9 @@ from collections import namedtuple
 
 import pytest
 
-from evmscript_parser.core.ABI import get_cached_combined
-from evmscript_parser.core.ABI.storage import CachedStorage, ABIKey
-from evmscript_parser.core.decode import decode_function_call
+from avotes_parser.core import decode_function_call
+from avotes_parser.core.ABI import get_cached_combined
+from avotes_parser.core.ABI.storage import CachedStorage, ABIKey
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 INTERFACES = os.path.join(CUR_DIR, 'interfaces')

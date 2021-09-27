@@ -16,3 +16,6 @@ HEX_PREFIX = '0x'
 def add_hex_prefix(data: str) -> str:
     """Add HEX_PREFIX to the start of a string data."""
     return f'{HEX_PREFIX}{data}'
+
+
+PRETTY_PRINT_NEXT_LEVEL_OFFSET = 4

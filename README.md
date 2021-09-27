@@ -4,8 +4,8 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
-[![PyPi version](https://pypip.in/v/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
-[![PyPi downloads](https://pypip.in/d/evmscript-parser/badge.png)](https://crate.io/packages/evmscript-parser/)
+[![PyPi Core version](https://pypip.in/v/avotes-parser-core/badge.png)](https://pypi.org/project/avotes-parser-core/)
+[![PyPi CLI version](https://pypip.in/v/avotes-parser-cli/badge.png)](https://pypi.org/project/avotes-parser-cli/)
 
 ### About
 

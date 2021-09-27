@@ -13,12 +13,12 @@ setup(
         'relative_to': __file__,
         'local_scheme': 'node-and-timestamp'
     },
-    setup_requiers=['setuptools_scm'],
+    setup_requires=['setuptools_scm'],
     packages=find_packages(
         where='.',
         exclude='tests'
     ),
-    python_requiers='>=3.8',
+    python_requires='>=3.8',
     install_requires=[
         'requests~=2.26.0',
         'pysha3~=1.0.0',

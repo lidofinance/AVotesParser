@@ -1,7 +1,7 @@
 """
 CLI tool for parsing the last N aragon votes from a target application.
 """
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 setup(
     name='avotes-parser-cli',
@@ -14,9 +14,8 @@ setup(
         'local_scheme': 'node-and-timestamp'
     },
     setup_requires=['setuptools_scm'],
-    packages=find_packages(
-        where='.',
-        exclude='tests'
+    packages=find_namespace_packages(
+        include=['avotes_parser.*']
     ),
     python_requires='>=3.8',
     install_requires=[

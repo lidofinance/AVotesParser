@@ -5,15 +5,16 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Tuple
 
-from evmscript_parser.core.exceptions import (
-    ABILocalFileNotExisted, ABIEtherscanNetworkError, ABIEtherscanStatusCode
-)
 from .storage import (
     ABIKey, ABI,
     CachedStorage
 )
 from .utilities.etherscan import (
     get_abi, get_implementation_address, DEFAULT_NET
+)
+from .utilities.exceptions import (
+    ABILocalNotFound, ABIEtherscanNetworkError,
+    ABIEtherscanStatusCode, ABIResolvingError
 )
 from .utilities.local import (
     get_all_files, read_abi_from_json
@@ -127,13 +128,13 @@ class ABIProviderLocalDirectory(ABIProvider):
 
         :param key: str, name of interface file.
         :return: abi
-        :exception ABILocalFileNotExisted in case of interface file does not
+        :exception ABILocalNotFound in case of interface file does not
                    exist.
         """
         if key.FunctionSignature in self._interfaces:
             return self._interfaces[key.FunctionSignature]
 
-        raise ABILocalFileNotExisted(key.FunctionSignature)
+        raise ABILocalNotFound(key.FunctionSignature)
 
 
 class ABIProviderCombined(
@@ -158,14 +159,21 @@ class ABIProviderCombined(
         :param key: Tuple[str, str], pair of address of contract
                                      and interface file.
         :return: abi
-        :exception ABILocalFileNotExisted in case of interface file does not
-                   exist.
+        :exception ABIResolvingError in case of resolving through all ways is
+                   failed.
         """
         try:
             return ABIProviderEtherscanAPI.get_abi(self, key)
         except (ABIEtherscanNetworkError, ABIEtherscanStatusCode) as err:
-            logging.debug(f'Fail on getting ABI from API: {str(err)}')
+            logging.debug(f'Fail on resolving ABI trough API: {str(err)}')
+
+        try:
             return ABIProviderLocalDirectory.get_abi(self, key)
+        except ABILocalNotFound as err:
+            logging.debug(f'Fail on resolving ABI trough local directory: '
+                          f'{str(err)}')
+
+        raise ABIResolvingError()
 
 
 def get_cached_etherscan_api(

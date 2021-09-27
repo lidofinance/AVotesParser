@@ -20,7 +20,7 @@ jobs:
 
   build-n-publish:
     needs: tests
-    name: Build and publish Python 🐍 distributions 📦 to PyPI
+    name: Build and publish core and CLI packages
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags')
     steps:
@@ -36,15 +36,31 @@ jobs:
           pip install
           build
           --user
-      - name: Build a binary wheel and a source tarball
+
+      - name: Build a binary wheel and a source tarball for the core
         run: >-
           python -m
           build
           --sdist
           --wheel
           --outdir dist/
-          .
-      - name: Publish distribution 📦 to PyPI
+          ${GITHUB_WORKSPACE}/production/avotes-parser-core/.
+
+      - name: Publish avotes-parser-core to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
-          password: ${{ secrets.PYPI_TOKEN }}
+          password: ${{ secrets.PYPI_TOKEN_CORE }}
+
+      - name: Build a binary wheel and a source tarball for the CLI
+        run: >-
+          python -m
+          build
+          --sdist
+          --wheel
+          --outdir dist/
+          ${GITHUB_WORKSPACE}/production/avotes-parser-cli/.
+
+      - name: Publish avotes-parser-cli to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.PYPI_TOKEN_CLI }}

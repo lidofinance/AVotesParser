@@ -53,7 +53,7 @@ class FuncInput(PrettyPrinted):
                     value_repr.append(entry_repr)
 
                 else:
-                    value_repr.append(str(self.value))
+                    value_repr.append(str(entry))
 
             value_repr = '\n'.join(value_repr)
             value_repr = f'[\n{value_repr}\n]'

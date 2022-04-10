@@ -18,7 +18,9 @@ test_target() {
   local INFURA_ID="${3}"
 
   echo "--- RUN TESTS: ${TARGET} ---"
-  tox -c "production/${TARGET}" -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
+  cd "production/${TARGET}"
+  poetry run tox -c "." -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
+  cd -
 }
 
 test() {

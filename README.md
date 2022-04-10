@@ -4,8 +4,8 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
-[![PyPi Core version](https://pypip.in/v/avotes-parser-core/badge.png)](https://pypi.org/project/avotes-parser-core/)
-[![PyPi CLI version](https://pypip.in/v/avotes-parser-cli/badge.png)](https://pypi.org/project/avotes-parser-cli/)
+[![PyPi Core version](https://img.shields.io/pypi/v/avotes-parser-core?color=yellow&label=PyPI%3Aavotes-parser-core)](https://pypi.org/project/avotes-parser-core/)
+[![PyPi CLI version](https://img.shields.io/pypi/v/avotes-parser-cli?color=yellow&label=PyPI%3Aavotes-parser-cli)](https://pypi.org/project/avotes-parser-cli/)
 
 ### About
 
@@ -25,10 +25,12 @@ pip install avotes-parser-cli
 2. From repository:
 
 ```shell
-git clone https://github.com/DmitIv/EVMScriptParser.git
-cd EVMScriptParser
+git clone git@github.com:lidofinance/AVotesParser.git
+cd AVotesParser
+
 cd production/avotes-parser-core
 python setup.py install
+
 cd ../avotes-parser-cli
 python setup.py install
 ```

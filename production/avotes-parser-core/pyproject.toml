@@ -2,7 +2,10 @@
 name = "avotes-parser-core"
 version = "0.5.0"
 description = "Aragon votings parser library"
-authors = ["Dmitri Ivakhnenko <dmit.ivh@gmail.com>, Eugene Mamin <TheDZhon@gmail.com>"]
+authors = [
+    "Dmitri Ivakhnenko <dmit.ivh@gmail.com>",
+    "Eugene Mamin <thedzhon@gmail.com>"
+]
 license = "MIT"
 packages = [{ include = "avotes_parser" }]
 

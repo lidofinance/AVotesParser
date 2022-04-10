@@ -80,7 +80,7 @@ description = "Aragon votings parser library"
 category = "main"
 optional = false
 python-versions = ">=3.8,<3.10"
-develop = false
+develop = true
 
 [package.dependencies]
 eth-brownie = "~1.18.1"
@@ -1260,7 +1260,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.10"
-content-hash = "61b993599d6db6d40c51e7247dbca81e913208de28842a7e07e8a564049edebe"
+content-hash = "1bb09df5a080b83f453a974fb88920ac8109181345dc27c6af31ac456a9c33ec"
 
 [metadata.files]
 aiohttp = [

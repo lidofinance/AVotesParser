@@ -3,9 +3,12 @@
 -----------------------------------------
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![python ~3.9](https://img.shields.io/badge/python->=3.8,<3.10-blue)
+![poetry 1.1.13](https://img.shields.io/badge/poetry-1.1.13-blue)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
-[![PyPi Core version](https://pypip.in/v/avotes-parser-core/badge.png)](https://pypi.org/project/avotes-parser-core/)
-[![PyPi CLI version](https://pypip.in/v/avotes-parser-cli/badge.png)](https://pypi.org/project/avotes-parser-cli/)
+[![PyPi Core version](https://img.shields.io/pypi/v/avotes-parser-core?color=yellow&label=PyPI%3Aavotes-parser-core)](https://pypi.org/project/avotes-parser-core/)
+[![PyPi CLI version](https://img.shields.io/pypi/v/avotes-parser-cli?color=yellow&label=PyPI%3Aavotes-parser-cli)](https://pypi.org/project/avotes-parser-cli/)
+
 
 ### About
 
@@ -14,26 +17,66 @@ aragon application. Utility is based on package `avotes-parser-core` for
 parsing and
 decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
 
+### 🏁 Getting started
+
+- This project uses Brownie development framework. Learn more about [Brownie](https://eth-brownie.readthedocs.io/en/stable/index.html).
+- [Poetry](https://python-poetry.org/) dependency and packaging manager is used to bootstrap environment and keep the repo sane.
+### Prerequisites
+
+- Python >= 3.8, <3.10
+- Pip >= 20.0
+
 ### Installation
 
-1. From PyPi:
+#### PyPi installation:
 
 ```shell
-pip install avotes-parser-cli
+pip install --user avotes-parser-cli
+```
+alternatively, if you prefer `pipx`:
+```shell
+pipx install avotes-parser-cli
 ```
 
-2. From repository:
+#### Installation from repository:
+
+##### Step 1. Install Poetry
+
+Use the following command to install poetry:
 
 ```shell
-git clone https://github.com/DmitIv/EVMScriptParser.git
-cd EVMScriptParser
+pip install --user poetry==1.1.13
+```
+
+alternatively, you could proceed with `pipx`:
+
+```shell
+pipx install poetry==1.1.13
+```
+
+##### Step 2. Build avotes-parser
+
+```shell
+git clone git@github.com:lidofinance/AVotesParser.git
+cd AVotesParser
+
 cd production/avotes-parser-core
-python setup.py install
+poetry install
+
 cd ../avotes-parser-cli
-python setup.py install
+poetry install
 ```
 
 ### Usage
+
+### `avotes-parser-cli` package
+
+Notice: if you have chosen poetry install method then you should spawn poetry environment to proceed:
+```shell
+poetry shell
+```
+
+AVotesParser has the following command-line interface:
 
 ```shell
 usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,kovan,rinkebay,ropsten}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]

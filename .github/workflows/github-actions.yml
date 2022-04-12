@@ -5,62 +5,22 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     env:
-      API_KEY: ${{ secrets.ETHERSCAN_TEST_API_KEY }}
-      INFURA_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID_GOERLI }}
+      ETHERSCAN_TOKEN: ${{ secrets.ETHERSCAN_TEST_API_KEY }}
+      WEB3_INFURA_PROJECT_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID_GOERLI }}
     steps:
-      - uses: actions/checkout@v1
-      - name: Install tox
-        run: pip install tox
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pip install --user poetry==1.1.3
 
       - name: Access to execution
         run: chmod +x ${GITHUB_WORKSPACE}/run_tests.sh
 
       - name: Run tests
-        run: ${GITHUB_WORKSPACE}/run_tests.sh $API_KEY $INFURA_ID
-
-  build-n-publish:
-    needs: tests
-    name: Build and publish core and CLI packages
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags')
-    steps:
-      - uses: actions/checkout@master
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-
-      - name: Install pypa/build
-        run: >-
-          python -m
-          pip install
-          build
-          --user
-
-      - name: Build a binary wheel and a source tarball for the core
-        run: >-
-          python -m
-          build
-          --sdist
-          --wheel
-          --outdir dist/
-          ${GITHUB_WORKSPACE}/production/avotes-parser-core/.
-
-      - name: Publish avotes-parser-core to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_TOKEN_CORE }}
-
-      - name: Build a binary wheel and a source tarball for the CLI
-        run: >-
-          python -m
-          build
-          --sdist
-          --wheel
-          --outdir dist/
-          ${GITHUB_WORKSPACE}/production/avotes-parser-cli/.
-
-      - name: Publish avotes-parser-cli to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_TOKEN_CLI }}
+        run: ${GITHUB_WORKSPACE}/run_tests.sh

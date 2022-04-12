@@ -1,11 +1,18 @@
 #!/bin/bash
-if [ "$#" -ne 2 ]; then
-  echo "Usage: run_tests.sh <etherscan-api-key> <infura-project-id>"
-  exit 0
+set -e
+
+API_KEY="$ETHERSCAN_TOKEN"
+INFURA_ID="$WEB3_INFURA_PROJECT_ID"
+
+if [ -z "$API_KEY" ]; then
+  echo "Please set ETHERSCAN_TOKEN env variable"
+  exit 1
 fi
 
-API_KEY="$1"
-INFURA_ID="$2"
+if [ -z "$INFURA_ID" ]; then
+  echo "Please set WEB3_INFURA_PROJECT_ID env variable"
+  exit 1
+fi
 
 pre_test() {
   DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,7 +25,11 @@ test_target() {
   local INFURA_ID="${3}"
 
   echo "--- RUN TESTS: ${TARGET} ---"
-  tox -c "production/${TARGET}" -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
+  cd "production/${TARGET}"
+  poetry install -v
+  poetry run tox -c "." -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
+  rm -rf $HOME/.cache/pypoetry/artifacts/*
+  cd -
 }
 
 test() {

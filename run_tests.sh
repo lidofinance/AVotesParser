@@ -26,6 +26,7 @@ test_target() {
 
   echo "--- RUN TESTS: ${TARGET} ---"
   cd "production/${TARGET}"
+  poetry install -v
   poetry run tox -c "." -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
   cd -
 }

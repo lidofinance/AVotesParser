@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 API_KEY="$ETHERSCAN_TOKEN"
 INFURA_ID="$WEB3_INFURA_PROJECT_ID"

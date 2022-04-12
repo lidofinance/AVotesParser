@@ -4,7 +4,8 @@ version = "0.5.0"
 description = "Aragon votings parser CLI"
 authors = [
     "Dmitri Ivakhnenko <dmit.ivh@gmail.com>",
-    "Eugene Mamin <thedzhon@gmail.com>"
+    "Eugene Mamin <thedzhon@gmail.com>",
+    "Aleksei Potapkin <folkyatina@gmail.com>"
 ]
 license = "MIT"
 packages = [{ include = "avotes_parser" }]

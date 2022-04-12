@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ETHERSCAN_TOKEN: ${{ secrets.ETHERSCAN_TEST_API_KEY }}
-      WEB3_INFURA_PROJECT_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID_GOERLI }}
+      WEB3_INFURA_PROJECT_ID: ${{secrets.WEB3_INFURA_PROJECT_ID_GOERLI }}
     steps:
       - uses: actions/checkout@v1
       - name: Install tox
@@ -15,6 +15,9 @@ jobs:
       - name: Access to execution
         run: chmod +x ${GITHUB_WORKSPACE}/run_tests.sh
 
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
       - name: Run tests
         run: ${GITHUB_WORKSPACE}/run_tests.sh
 

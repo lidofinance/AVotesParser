@@ -3,7 +3,7 @@
 -----------------------------------------
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![python ~3.9](https://img.shields.io/badge/python->=3.8,<3.10-blue)
+![python ~3.9](https://img.shields.io/badge/python->=3.8,<3.11-blue)
 ![poetry 1.1.13](https://img.shields.io/badge/poetry-1.1.13-blue)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
 [![PyPi Core version](https://img.shields.io/pypi/v/avotes-parser-core?color=yellow&label=PyPI%3Aavotes-parser-core)](https://pypi.org/project/avotes-parser-core/)
@@ -23,7 +23,7 @@ decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
 - [Poetry](https://python-poetry.org/) dependency and packaging manager is used to bootstrap environment and keep the repo sane.
 ### Prerequisites
 
-- Python >= 3.8, <3.10
+- Python >= 3.8, <3.11
 - Pip >= 20.0
 
 ### Installation

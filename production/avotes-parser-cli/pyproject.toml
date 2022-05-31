@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "avotes-parser-cli"
-version = "0.5.0"
+version = "0.5.1"
 description = "Aragon votings parser CLI"
 authors = [
     "Dmitri Ivakhnenko <dmit.ivh@gmail.com>",
@@ -11,15 +11,15 @@ license = "MIT"
 packages = [{ include = "avotes_parser" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.10"
+python = ">=3.8,<3.11"
 requests = "~2.27.1"
 pysha3 = "~1.0.2"
-eth-brownie = "~1.18.1"
-web3 = "~5.27.0"
-avotes-parser-core = "~0.5.0"
+eth-brownie = "~1.19.0"
+web3 = "~5.29.1"
+avotes-parser-core = "~0.5.1"
 
 [tool.poetry.dev-dependencies]
-tox = "~3.24.5"
+tox = "~3.25.0"
 pytest = "~6.2.5"
 flake8 = "~4.0.1"
 

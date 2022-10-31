@@ -123,13 +123,13 @@ class EVMScript(PrettyPrinted):
             f'{offset}Script executor ID: {self.spec_id}'
         )
 
-        calls = '\n'.join((
+        calls = '\n'.join(
             call.pretty_print(
                 offset=offset_size + PRETTY_PRINT_NEXT_LEVEL_OFFSET,
                 **kwargs
             ) if isinstance(call, PrettyPrinted) else repr(call)
             for call in self.calls
-        ))
+        )
         calls = (
             f'{offset}Calls:\n'
             f'{calls}'

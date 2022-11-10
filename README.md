@@ -45,13 +45,13 @@ pipx install avotes-parser-cli
 Use the following command to install poetry:
 
 ```shell
-pip install --user poetry==1.1.13
+pip install --user poetry==1.2.2
 ```
 
 alternatively, you could proceed with `pipx`:
 
 ```shell
-pipx install poetry==1.1.13
+pipx install poetry==1.2.2
 ```
 
 ##### Step 2. Build avotes-parser

@@ -14,7 +14,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--infura-id', type=str,
         default=None, help='Infura project ID '
-                           'for interaction with goerli.'
+                           'for interaction with network.'
     )
 
 

@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![python ~3.9](https://img.shields.io/badge/python->=3.8,<3.11-blue)
-![poetry 1.1.13](https://img.shields.io/badge/poetry-1.1.13-blue)
+![poetry 1.2.2](https://img.shields.io/badge/poetry-1.2.2-blue)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
 [![PyPi Core version](https://img.shields.io/pypi/v/avotes-parser-core?color=yellow&label=PyPI%3Aavotes-parser-core)](https://pypi.org/project/avotes-parser-core/)
 [![PyPi CLI version](https://img.shields.io/pypi/v/avotes-parser-cli?color=yellow&label=PyPI%3Aavotes-parser-cli)](https://pypi.org/project/avotes-parser-cli/)
@@ -21,6 +21,7 @@ decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
 
 - This project uses Brownie development framework. Learn more about [Brownie](https://eth-brownie.readthedocs.io/en/stable/index.html).
 - [Poetry](https://python-poetry.org/) dependency and packaging manager is used to bootstrap environment and keep the repo sane.
+
 ### Prerequisites
 
 - Python >= 3.8, <3.11
@@ -54,7 +55,15 @@ alternatively, you could proceed with `pipx`:
 pipx install poetry==1.2.2
 ```
 
-##### Step 2. Build avotes-parser
+##### Step 2. Install poetry dyn versioning plugin
+
+The [poetry dynamic versioning](https://github.com/mtkennerly/poetry-dynamic-versioning) plugin allows synchronizing published PyPi versions with GitHub releases.
+
+```shell
+poetry self add "poetry-dynamic-versioning[plugin]"
+```
+
+##### Step 3. Build avotes-parser
 
 ```shell
 git clone git@github.com:lidofinance/AVotesParser.git

@@ -68,7 +68,7 @@ class EncodedCall(PrettyPrinted):
             f'{offset}Address: {self.address}\n'
             f'{offset}Call data length: {self.call_data_length}\n'
             f'{offset}Signature: {self.method_id}\n'
-            f'{offset}Encoded call data: {self.call_data_length}'
+            f'{offset}Encoded call data: {self.encoded_call_data}'
         )
 
     def __post_init__(self):

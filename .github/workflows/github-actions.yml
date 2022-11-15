@@ -19,6 +19,9 @@ jobs:
       - name: Install poetry
         run: pip install --user poetry==1.2.2
 
+      - name: Install poetry dyn version plugin
+        run: poetry self add "poetry-dynamic-versioning[plugin]"
+
       - name: Access to execution
         run: chmod +x ${GITHUB_WORKSPACE}/run_tests.sh
 

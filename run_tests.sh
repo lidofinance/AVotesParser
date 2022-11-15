@@ -27,9 +27,7 @@ test_target() {
   echo "--- RUN TESTS: ${TARGET} ---"
   cd "production/${TARGET}"
   poetry install -v
-  poetry shell
-  tox -c "." -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
-  exit
+  poetry run -- tox -c "." -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
   rm -rf $HOME/.cache/pypoetry/artifacts/*
   cd -
 }

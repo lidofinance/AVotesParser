@@ -20,8 +20,7 @@ parse_with_decoding_examples = (
             spec_id='00000001',
             calls=[
                 Call(
-                    contract_address="0x9d4af1ee19dad8857db"
-                                     "3a45b0374c81c8a1c6320",
+                    contract_address="0x9d4af1ee19dad8857db3a45b0374c81c8a1c6320", # noqa
                     function_signature="0xae962acf",
                     function_name="setNodeOperatorStakingLimit",
                     inputs=[

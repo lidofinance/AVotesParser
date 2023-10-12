@@ -46,13 +46,13 @@ pipx install avotes-parser-cli
 Use the following command to install poetry:
 
 ```shell
-pip install --user poetry==1.5.0
+pip install --user poetry==1.2.2
 ```
 
 alternatively, you could proceed with `pipx`:
 
 ```shell
-pipx install poetry==1.5.0
+pipx install poetry==1.2.2
 ```
 
 ##### Step 2. Install poetry dyn versioning plugin

@@ -22,9 +22,6 @@ NET_URL_MAP = {
     'mainnet': 'https://api.etherscan.io',
     'goerli': 'https://api-goerli.etherscan.io',
     'holesky': 'https://api-holesky.etherscan.io',
-    'kovan': 'https://api-kovan.etherscan.io',
-    'rinkebay': 'https://api-rinkeby.etherscan.io',
-    'ropsten': 'https://api-ropsten.etherscan.io'
 }
 SUCCESS = '1'
 MINIMUM_RETRIES = 1

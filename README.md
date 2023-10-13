@@ -96,7 +96,7 @@ poetry shell
 AVotesParser has the following command-line interface:
 
 ```shell
-usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,holesky,kovan,rinkebay,ropsten}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
+usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,holesky}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
 
 Parsing and decoding aragon votes. Prepare human-readable representation of the last N votes for a aragon application with a specific address in a target net.
 
@@ -113,7 +113,7 @@ optional arguments:
   -n N                  Parse last N votes. (default: 10)
   --aragon-voting-address ARAGON_VOTING_ADDRESS
                         Address of aragon voting contract. (default: 0x2e59A20f205bB85a89C53f1936454680651E618e)
-  --net {mainnet,goerli,holesky,kovan,rinkebay,ropsten}
+  --net {mainnet,goerli,holesky}
                         Net name is case-insensitive. (default: mainnet)
   --retries RETRIES     Number of retries of calling Etherscan API. (default: 5)
   --num-workers NUM_WORKERS
@@ -121,6 +121,13 @@ optional arguments:
   --debug               Show debug messages (default: False)
 ```
 
+### For Holesky
+You need to add new network to brownie
+```bash
+brownie networks add Ethereum holesky host=<rpc-url> chainid=17000 name=Holesky
+```
+
+### Examples of running
 Example of running for the last vote:
 
 ```shell
@@ -144,11 +151,6 @@ your [Infura project](https://eth-brownie.readthedocs.io/en/stable/network-manag
 and to set its id value through `WEB3_INFURA_PROJECT_ID`. Also, you need to
 create [Etherscan API token](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics#creating-an-api-key)
 .
-
-### For Holesky
-```bash
-brownie networks add Ethereum holesky host=<rpc-url> chainid=17000 name=Holesky
-```
 
 ### `avotes-parser-core` package
 

@@ -70,10 +70,18 @@ git clone git@github.com:lidofinance/AVotesParser.git
 cd AVotesParser
 
 cd production/avotes-parser-core
+poetry run pip install "cython<3.0" pyyaml==5.4.1 --no-build-isolation
 poetry install
 
 cd ../avotes-parser-cli
+poetry run pip install "cython<3.0" pyyaml==5.4.1 --no-build-isolation
 poetry install
+```
+
+### for development 
+You could connect `avotes-parser-core` to `avotes-parser-cli` locally
+```shell
+poetry add --editable ../avotes-parser-core/
 ```
 
 ### Usage
@@ -88,18 +96,24 @@ poetry shell
 AVotesParser has the following command-line interface:
 
 ```shell
-usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,kovan,rinkebay,ropsten}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
+usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,holesky}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
 
 Parsing and decoding aragon votes. Prepare human-readable representation of the last N votes for a aragon application with a specific address in a target net.
 
-optional arguments:
-  -h, --help            show this help message and exit
+required arguments:
   --apitoken APITOKEN   Etherscan API key as string or a path to txt file with it. (default: None)
   --infura INFURA       Infura project ID. (default: None)
+
+required arguments (for testnet):
+  --aragon-voting-address ARAGON_VOTING_ADDRESS
+                        Address of aragon voting contract. (default: 0x2e59A20f205bB85a89C53f1936454680651E618e)
+  
+optional arguments:
+  -h, --help            show this help message and exit
   -n N                  Parse last N votes. (default: 10)
   --aragon-voting-address ARAGON_VOTING_ADDRESS
                         Address of aragon voting contract. (default: 0x2e59A20f205bB85a89C53f1936454680651E618e)
-  --net {mainnet,goerli,kovan,rinkebay,ropsten}
+  --net {mainnet,goerli,holesky}
                         Net name is case-insensitive. (default: mainnet)
   --retries RETRIES     Number of retries of calling Etherscan API. (default: 5)
   --num-workers NUM_WORKERS
@@ -107,6 +121,13 @@ optional arguments:
   --debug               Show debug messages (default: False)
 ```
 
+### For Holesky
+You need to add new network to brownie
+```bash
+brownie networks add Ethereum holesky host=<rpc-url> chainid=17000 name=Holesky
+```
+
+### Examples of running
 Example of running for the last vote:
 
 ```shell

@@ -26,6 +26,7 @@ test_target() {
 
   echo "--- RUN TESTS: ${TARGET} ---"
   cd "production/${TARGET}"
+  poetry run pip install "cython<3.0" pyyaml==5.4.1 --no-build-isolation
   poetry install -v
   poetry run -- tox -c "." -- --apikey="$API_KEY" --infura-id="$INFURA_ID"
   rm -rf $HOME/.cache/pypoetry/artifacts/*

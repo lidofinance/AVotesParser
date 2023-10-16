@@ -4,11 +4,10 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![python ~3.9](https://img.shields.io/badge/python->=3.8,<3.11-blue)
-![poetry 1.2.2](https://img.shields.io/badge/poetry-1.2.2-blue)
+![poetry 1.6](https://img.shields.io/badge/poetry-1.6.1-blue)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
 [![PyPi Core version](https://img.shields.io/pypi/v/avotes-parser-core?color=yellow&label=PyPI%3Aavotes-parser-core)](https://pypi.org/project/avotes-parser-core/)
 [![PyPi CLI version](https://img.shields.io/pypi/v/avotes-parser-cli?color=yellow&label=PyPI%3Aavotes-parser-cli)](https://pypi.org/project/avotes-parser-cli/)
-
 
 ### About
 
@@ -29,30 +28,32 @@ decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
 
 ### Installation
 
-#### PyPi installation:
+#### PyPi installation
 
 ```shell
 pip install --user avotes-parser-cli
 ```
+
 alternatively, if you prefer `pipx`:
+
 ```shell
 pipx install avotes-parser-cli
 ```
 
-#### Installation from repository:
+#### Installation from repository
 
 ##### Step 1. Install Poetry
 
 Use the following command to install poetry:
 
 ```shell
-pip install --user poetry==1.2.2
+pip install --user poetry==1.6.1
 ```
 
 alternatively, you could proceed with `pipx`:
 
 ```shell
-pipx install poetry==1.2.2
+pipx install poetry==1.6.1
 ```
 
 ##### Step 2. Install poetry dyn versioning plugin
@@ -78,8 +79,10 @@ poetry run pip install "cython<3.0" pyyaml==5.4.1 --no-build-isolation
 poetry install
 ```
 
-### for development 
+### for development
+
 You could connect `avotes-parser-core` to `avotes-parser-cli` locally
+
 ```shell
 poetry add --editable ../avotes-parser-core/
 ```
@@ -89,6 +92,7 @@ poetry add --editable ../avotes-parser-core/
 ### `avotes-parser-cli` package
 
 Notice: if you have chosen poetry install method then you should spawn poetry environment to proceed:
+
 ```shell
 poetry shell
 ```
@@ -107,7 +111,7 @@ required arguments:
 required arguments (for testnet):
   --aragon-voting-address ARAGON_VOTING_ADDRESS
                         Address of aragon voting contract. (default: 0x2e59A20f205bB85a89C53f1936454680651E618e)
-  
+
 optional arguments:
   -h, --help            show this help message and exit
   -n N                  Parse last N votes. (default: 10)
@@ -122,12 +126,15 @@ optional arguments:
 ```
 
 ### For Holesky
+
 You need to add new network to brownie
+
 ```bash
 brownie networks add Ethereum holesky host=<rpc-url> chainid=17000 name=Holesky
 ```
 
 ### Examples of running
+
 Example of running for the last vote:
 
 ```shell

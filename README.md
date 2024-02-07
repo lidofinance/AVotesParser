@@ -100,7 +100,7 @@ poetry shell
 AVotesParser has the following command-line interface:
 
 ```shell
-usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,holesky}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
+usage: avotes-parser [-h] --apitoken APITOKEN --infura INFURA [-n N] [--aragon-voting-address ARAGON_VOTING_ADDRESS] [--net {mainnet,goerli,holesky,sepolia}] [--retries RETRIES] [--num-workers NUM_WORKERS] [--debug]
 
 Parsing and decoding aragon votes. Prepare human-readable representation of the last N votes for a aragon application with a specific address in a target net.
 
@@ -117,7 +117,7 @@ optional arguments:
   -n N                  Parse last N votes. (default: 10)
   --aragon-voting-address ARAGON_VOTING_ADDRESS
                         Address of aragon voting contract. (default: 0x2e59A20f205bB85a89C53f1936454680651E618e)
-  --net {mainnet,goerli,holesky}
+  --net {mainnet,goerli,holesky,sepolia}
                         Net name is case-insensitive. (default: mainnet)
   --retries RETRIES     Number of retries of calling Etherscan API. (default: 5)
   --num-workers NUM_WORKERS
@@ -131,6 +131,12 @@ You need to add new network to brownie
 
 ```bash
 brownie networks add Ethereum holesky host=<rpc-url> chainid=17000 name=Holesky
+```
+
+### For Sepolia
+
+```bash
+brownie networks add Ethereum sepolia host=<rpc-url> chainid=11155111 name=Sepolia
 ```
 
 ### Examples of running

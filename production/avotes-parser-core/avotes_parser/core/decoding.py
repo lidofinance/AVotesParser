@@ -1,18 +1,13 @@
 """
 Decoding payload of aragon votes.
 """
+
 from dataclasses import dataclass
-from typing import (
-    Union, Tuple,
-    List, Any,
-    Dict, Optional
-)
+from typing import Union, Tuple, List, Any, Dict, Optional
 
 import web3
 
-from .ABI.storage import (
-    CachedStorage, ABI, ABIKey
-)
+from .ABI.storage import CachedStorage, ABI, ABIKey
 from .pretty_printed import PrettyPrinted
 from .spec import HEX_PREFIX, PRETTY_PRINT_NEXT_LEVEL_OFFSET
 
@@ -34,12 +29,12 @@ class FuncInput(PrettyPrinted):
 
     def __post_init__(self):
         """Conversion from raw bytes to string for bytes values."""
-        if callable(getattr(self.value, 'hex', None)):
+        if callable(getattr(self.value, "hex", None)):
             self.value = self.value.hex()
 
     def pretty_print(self, *_, **kwargs) -> str:
         """Get human-readable representation."""
-        offset_size = kwargs.pop('offset', 0)
+        offset_size = kwargs.pop("offset", 0)
         offset = PrettyPrinted.get_tabular(offset_size)
 
         if isinstance(self.value, list):
@@ -47,20 +42,19 @@ class FuncInput(PrettyPrinted):
             for entry in self.value:
                 if isinstance(entry, PrettyPrinted):
                     entry_repr = entry.pretty_print(
-                        offset=offset_size + PRETTY_PRINT_NEXT_LEVEL_OFFSET,
-                        **kwargs
+                        offset=offset_size + PRETTY_PRINT_NEXT_LEVEL_OFFSET, **kwargs
                     )
                     value_repr.append(entry_repr)
 
                 else:
                     value_repr.append(str(entry))
 
-            value_repr = '\n'.join(value_repr)
-            value_repr = f'[\n{value_repr}\n]'
+            value_repr = "\n".join(value_repr)
+            value_repr = f"[\n{value_repr}\n]"
         else:
             value_repr = str(self.value)
 
-        return f'{offset}{self.name}: {self.type} = {value_repr}'
+        return f"{offset}{self.name}: {self.type} = {value_repr}"
 
     def __repr__(self) -> str:
         """Get human-readable representation."""
@@ -82,30 +76,29 @@ class Call(PrettyPrinted):
 
     def pretty_print(self, *_, **kwargs) -> str:
         """Get human-readable representation."""
-        offset_size = kwargs.pop('offset', 0)
+        offset_size = kwargs.pop("offset", 0)
         offset = PrettyPrinted.get_tabular(offset_size)
 
         header = (
-            f'{offset}Function call\n'
-            f'{offset}Contract: {self.contract_address}\n'
-            f'{offset}Signature: {self.function_signature}\n'
-            f'{offset}Name: {self.function_name}'
+            f"{offset}Function call\n"
+            f"{offset}Contract: {self.contract_address}\n"
+            f"{offset}Signature: {self.function_signature}\n"
+            f"{offset}Name: {self.function_name}"
         )
 
-        inputs = '\n'.join((inp.pretty_print(
-            offset=offset_size, **kwargs
-        ) if isinstance(
-            inp, PrettyPrinted
-        ) else repr(inp) for inp in self.inputs))
-        inputs = (
-            f'{offset}Inputs:\n'
-            f'{inputs}'
+        inputs = "\n".join(
+            (
+                (
+                    inp.pretty_print(offset=offset_size, **kwargs)
+                    if isinstance(inp, PrettyPrinted)
+                    else repr(inp)
+                )
+                for inp in self.inputs
+            )
         )
+        inputs = f"{offset}Inputs:\n" f"{inputs}"
 
-        return (
-            f'{header}\n'
-            f'{inputs}'
-        )
+        return f"{header}\n" f"{inputs}"
 
     def __repr__(self) -> str:
         """Get human-readable representation."""
@@ -120,8 +113,7 @@ _CacheT = CachedStorage[Union[ABIKey, Tuple[ABIKey, ABIKey]], ABI]
 
 
 def decode_function_call(
-        contract_address: str, function_signature: str,
-        call_data: str, abi_storage: _CacheT
+    contract_address: str, function_signature: str, call_data: str, abi_storage: _CacheT
 ) -> Optional[Call]:
     """
     Decode function call.
@@ -141,46 +133,35 @@ def decode_function_call(
     if function_description is None:
         return function_description
 
-    address = web3.Web3.toChecksumAddress(contract_address)
-    contract = web3.Web3().eth.contract(
-        address=address, abi=abi.raw
-    )
+    address = web3.Web3.to_checksum_address(contract_address)
+    contract = web3.Web3().eth.contract(address=address, abi=abi.raw)
 
-    inputs_spec = function_description['inputs']
+    inputs_spec = function_description["inputs"]
 
     if call_data.startswith(HEX_PREFIX):
-        call_data = call_data[len(HEX_PREFIX):]
+        call_data = call_data[len(HEX_PREFIX) :]  # noqa: E203
 
     _, decoded_inputs = contract.decode_function_input(
-        f'{function_signature}{call_data}'
+        f"{function_signature}{call_data}"
     )
 
     inputs = [
-        FuncInput(
-            inp['name'],
-            inp['type'],
-            decoded_inputs[inp['name']]
-        )
+        FuncInput(inp["name"], inp["type"], decoded_inputs[inp["name"]])
         for inp in inputs_spec
     ]
 
     properties = {
-        'constant': function_description.get(
-            'constant', 'unknown'
-        ),
-        'payable': function_description.get(
-            'payable', 'unknown'
-        ),
-        'stateMutability': function_description.get(
-            'stateMutability', 'unknown'
-        ),
-        'type': function_description.get(
-            'type', 'unknown'
-        )
+        "constant": function_description.get("constant", "unknown"),
+        "payable": function_description.get("payable", "unknown"),
+        "stateMutability": function_description.get("stateMutability", "unknown"),
+        "type": function_description.get("type", "unknown"),
     }
 
     return Call(
-        contract_address, function_signature,
-        function_description.get('name', 'unknown'), inputs,
-        properties, function_description['outputs']
+        contract_address,
+        function_signature,
+        function_description.get("name", "unknown"),
+        inputs,
+        properties,
+        function_description["outputs"],
     )

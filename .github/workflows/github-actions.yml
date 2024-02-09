@@ -8,16 +8,24 @@ jobs:
       ETHERSCAN_TOKEN: ${{ secrets.ETHERSCAN_TEST_API_KEY }}
       WEB3_INFURA_PROJECT_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID_GOERLI }}
     steps:
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Install poetry
-        run: pip install --user poetry==1.7.1
+        run: >
+          pipx install poetry
+
+      - name: Add poetry to $GITHUB_PATH
+        run: >
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: poetry install --no-root
 
       - name: Install poetry dyn version plugin
         run: poetry self add "poetry-dynamic-versioning[plugin]"

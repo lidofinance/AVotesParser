@@ -11,12 +11,12 @@ license = "MIT"
 packages = [{ include = "avotes_parser" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
-requests = "~2.28.1"
-pysha3 = "~1.0.2"
-eth-brownie = "~1.19.2"
-web3 = "~5.31.1"
-avotes-parser-core = "*"
+python = ">=3.10,<4"
+requests = "~2.31.0"
+safe-pysha3 = "~1.0.4"
+eth-brownie = "~1.20.0"
+web3 = "~6.15.0"
+avotes-parser-core = "~0.5.5.post5"
 
 [tool.poetry.dev-dependencies]
 tox = "~3.25.0"
@@ -30,6 +30,7 @@ avotes-parser = "avotes_parser.cli.__main__:main"
 enable = true
 vcs = "git"
 style = "semver"
+metadata = false
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.1.0,<2.0.0"]

@@ -12,6 +12,7 @@ packages = [{ include = "avotes_parser" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4"
+setuptools = "~69.0.3"
 requests = "~2.31.0"
 safe-pysha3 = "~1.0.4"
 eth-brownie = "~1.20.0"

@@ -3,8 +3,8 @@
 -----------------------------------------
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![python ~3.9](https://img.shields.io/badge/python->=3.8,<3.11-blue)
-![poetry 1.6](https://img.shields.io/badge/poetry-1.6.1-blue)
+![python ~3.12](https://img.shields.io/badge/python->=3.10,<4-blue)
+![poetry 1.7](https://img.shields.io/badge/poetry-1.7-blue)
 [![Tests](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/lidofinance/AVotesParser/actions/workflows/github-actions.yml)
 [![PyPi Core version](https://img.shields.io/pypi/v/avotes-parser-core?color=yellow&label=PyPI%3Aavotes-parser-core)](https://pypi.org/project/avotes-parser-core/)
 [![PyPi CLI version](https://img.shields.io/pypi/v/avotes-parser-cli?color=yellow&label=PyPI%3Aavotes-parser-cli)](https://pypi.org/project/avotes-parser-cli/)
@@ -23,7 +23,7 @@ decoding [EVMScripts](https://hack.aragon.org/docs/aragonos-ref#evmscripts-1).
 
 ### Prerequisites
 
-- Python >= 3.8, <3.11
+- Python >= 3.10, <4
 - Pip >= 20.0
 
 ### Installation
@@ -47,13 +47,13 @@ pipx install avotes-parser-cli
 Use the following command to install poetry:
 
 ```shell
-pip install --user poetry==1.6.1
+pip install --user poetry==1.7.1
 ```
 
 alternatively, you could proceed with `pipx`:
 
 ```shell
-pipx install poetry==1.6.1
+pipx install poetry==1.7.1
 ```
 
 ##### Step 2. Install poetry dyn versioning plugin
@@ -71,11 +71,9 @@ git clone git@github.com:lidofinance/AVotesParser.git
 cd AVotesParser
 
 cd production/avotes-parser-core
-poetry run pip install "cython<3.0" pyyaml==5.4.1 --no-build-isolation
 poetry install
 
 cd ../avotes-parser-cli
-poetry run pip install "cython<3.0" pyyaml==5.4.1 --no-build-isolation
 poetry install
 ```
 

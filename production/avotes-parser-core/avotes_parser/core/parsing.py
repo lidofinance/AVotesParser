@@ -3,8 +3,10 @@ Parsing payload of aragon votes.
 """
 import json
 from dataclasses import dataclass, field, asdict
-from typing import Tuple, List
+from typing import Optional, Tuple, List, Union
 
+from .ABI.storage import ABI, ABIKey, CachedStorage
+from .decoding import Call, decode_function_call
 from .pretty_printed import PrettyPrinted
 from .spec import (
     LENGTH_SPEC_ID, LENGTH_ADDRESS,
@@ -111,7 +113,7 @@ class EVMScript(PrettyPrinted):
     # Script executor id
     spec_id: str = field(default=DEFAULT_SPEC_ID)
     # Calls data
-    calls: List[EncodedCall] = field(default_factory=list)
+    calls: Union[List[EncodedCall], List[Call]] = field(default_factory=list)
 
     def pretty_print(self, *_, **kwargs) -> str:
         """Get human-readable form."""
@@ -123,13 +125,13 @@ class EVMScript(PrettyPrinted):
             f'{offset}Script executor ID: {self.spec_id}'
         )
 
-        calls = '\n'.join((
+        calls = '\n'.join(
             call.pretty_print(
                 offset=offset_size + PRETTY_PRINT_NEXT_LEVEL_OFFSET,
                 **kwargs
             ) if isinstance(call, PrettyPrinted) else repr(call)
             for call in self.calls
-        ))
+        )
         calls = (
             f'{offset}Calls:\n'
             f'{calls}'
@@ -184,11 +186,18 @@ def _parse_single_call(
     )
 
 
-def parse_script(encoded_script: str) -> EVMScript:
+CacheT = CachedStorage[Union[ABIKey, Tuple[ABIKey, ABIKey]], ABI]
+
+
+def parse_script(
+    encoded_script: str,
+    abi_storage: Optional[CacheT] = None,
+) -> EVMScript:
     """
     Parse encoded EVM script.
 
     :param encoded_script: str, encoded EVM script.
+    :param abi_storage: CachedStorage, storage of contracts ABI.
     :return: parsed script as instance of EVMScript object.
     """
     if encoded_script.startswith(HEX_PREFIX):
@@ -200,6 +209,16 @@ def parse_script(encoded_script: str) -> EVMScript:
     while i < len(encoded_script):
         i, one_call = _parse_single_call(encoded_script, i)
         calls_data.append(one_call)
+
+    if abi_storage is not None:
+        calls_data = [
+            decode_function_call(
+                contract_address=call.address,
+                function_signature=call.method_id,
+                call_data=call.encoded_call_data,
+                abi_storage=abi_storage,
+            ) for call in calls_data
+        ]
 
     return EVMScript(
         spec_id, calls_data
